@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Module>
+  <ModulePrefs title="Email Receiver"
+    description="Send email to Email Receiver"
+    height="20"
+    author="Joshua Hall"
+    author_email="..."
+    author_location="Loveland, OH">
+
+    <!-- Declare feature dependencies. -->
+
+    <!-- This one is not specific to Gmail contextual gadgets. -->
+    <Require feature="dynamic-height"/>
+
+    <!-- The next feature, Caja, is optional, and is supported for
+     use only within test domains. Uncomment the tag only for
+     non-production gadgets. -->
+    <!-- <Require feature="caja"/> -->
+
+    <!-- The next feature, google.contentmatch, is required for all
+     Gmail contextual gadgets.
+     <Param> - specify one or more comma-separated extractor IDs in
+     a param named "extractors". This line is overridden by the extractor ID
+     in the manifest, but is still expected to be present. -->
+    <Require feature="google.contentmatch">
+      <Param name="extractors">
+        google.com:SubjectExtractor
+      </Param>
+    </Require>
+
+    
+
+  </ModulePrefs>
+
+  <!-- Define the content type and display location. The settings
+   "html" and "card" are required for all Gmail contextual gadgets. -->
+  <Content type="html" view="card">
+    <![CDATA[
+      <!-- Start with Single Sign-On -->
+      <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js'></script>
+      <script type="text/javascript">
+        function sendEmailToReceiver() {
+          matches = google.contentmatch.getContentMatches();
+          //alert(JSON.stringify(matches));
+          var to = '';
+          var from = '';
+          var subject;
+          var body;
+          var domain = gadgets.util.getUrlParameters()['parent'].match(/.+\/a\/(.+)\/html/)[1];
+           for (var match in matches) {
+          for (var key in matches[match]) {
+            if(key == 'subject')
+              subject = matches[match][key];
+            if(key == 'email_body')
+              body = matches[match][key];
+            if(key == 'sender_email')
+              from = matches[match][key];
+            if(key == 'recipient_email') {
+                if(to != '')
+                  to = to + ',';
+                to = to + matches[match][key];
+              }
+             
+          }
+        }
+          var postdata = {   From : from,   To : to, Subject : subject, Body : body, Domain : domain }; 
+          var params = {};
+          params[gadgets.io.RequestParameters.METHOD] = gadgets.io.MethodType.POST;
+          params[gadgets.io.RequestParameters.POST_DATA] = gadgets.io.encodeValues(postdata);
+          gadgets.io.makeRequest("http://emailreceiver.apphb.com/email", function() { alert('hi'); }, params); 
+        }
+        
+        
+        var button = document.createElement('button');
+        button.setAttribute('onclick', 'sendEmailToReceiver()');
+
+        var text = document.createTextNode('Send Email');
+        button.appendChild(text);
+
+        document.body.appendChild(button);        
+        
+        gadgets.window.adjustHeight(300);
+		gadgets.window.adjustWidth(100);
+      </script>
+      <div id="output"></div>
+    ]]>
+    
+  </Content>
+</Module>

@@ -1,0 +1,90 @@
+﻿using System;
+using System.Linq;
+using EmailReceiverTwo.Domain;
+using Nancy;
+using Nancy.ModelBinding;
+using Nancy.Security;
+using Raven.Client;
+
+namespace EmailReceiverTwo
+{
+    public class EmailModule : NancyModule
+    {
+        public EmailModule(IDocumentSession documentSession)
+            : base("email")
+        {
+            
+            Get["/"] = _ =>
+            {
+                this.RequiresAuthentication();
+                var user =
+                    documentSession.Query<UserModel>().Single(u => u.Username == this.Context.CurrentUser.UserName);
+                var emails =
+                    documentSession.Query<Email>()
+                        .Where(e => e.Organization == user.Organization && e.Processed == false)
+                        .Select(e => new EmailViewModel()
+                        {
+                            Id = e.Id,
+                            Body = e.Body,
+                            Domain = e.Organization.Name,
+                            From = e.From,
+                            Subject = e.Subject,
+                            To = e.To
+                        });
+                return Response.AsJson(emails);
+            };
+
+            Post["/process/{Id}"] = parameters =>
+            {
+                this.RequiresAuthentication();
+                var email = documentSession.Load<Email>((Guid)parameters.Id);
+                email.Processed = true;
+                documentSession.SaveChanges();
+                //var hub = GlobalHost.ConnectionManager.GetHubContext<EmailHub>();
+                var emailViewModel = new EmailViewModel
+                {
+                    Id = email.Id,
+                    Body = email.Body,
+                    Domain = email.Organization.Name,
+                    From = email.From,
+                    Subject = email.Subject,
+                    To = email.To
+                };
+
+               // hub.Clients.All.EmailRemoved(emailViewModel);
+                return HttpStatusCode.OK;
+            };
+
+            Post["/"] = _ =>
+            {
+                var email = this.Bind<EmailViewModel>();
+                var organization = documentSession.Query<Organization>().Single(o => o.Name == email.Domain);
+                var orgEmail = new Email
+                {
+                    Body = email.Body,
+                    Create = DateTime.Now,
+                    From = email.From,
+                    Id = Guid.NewGuid(),
+                    Organization = organization,
+                    Subject = email.Subject,
+                    To = email.To
+                };
+                documentSession.Store(orgEmail);
+                documentSession.SaveChanges();
+               // var hub = GlobalHost.ConnectionManager.GetHubContext<EmailHub>();
+                //hub.Clients.All.AddEmail(email);
+                return HttpStatusCode.OK;
+            };
+        }
+    }
+
+    public class EmailViewModel
+    {
+        public Guid Id { get; set; }
+        public string From { get; set; }
+        public string To { get; set; }
+        public string Subject { get; set; }
+        public string Body { get; set; }
+        public string Domain { get; set; }
+    }
+}

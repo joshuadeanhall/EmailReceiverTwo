@@ -1,0 +1,22 @@
+﻿
+<table class="table table-striped table-hover">
+    <tr>
+        <th>
+            To
+        </th>
+        <th>
+            From
+        </th>
+        <th>
+            Subject
+        </th>
+        <th></th>
+    </tr>
+    <tr ng-repeat="email in emails">
+        <td>{{email.Id}} - {{email.To}}</td>
+        <td>{{email.From}}</td>
+        <td>{{email.Subject}}</td>
+        
+        <td><button ng-click="processEmail(email.Id)" class="btn btn-default">Process</button></td>
+    </tr>
+</table>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ApplicationManifest xmlns="http://schemas.google.com/ApplicationManifest/2009">
+
+  <!-- Support info to show in the marketplace & control panel -->
+  <Support>
+    <!-- URL for application setup as an optional redirect during the install -->
+    
+    <!-- URL for application configuration, accessed from the app settings
+     page in the control panel -->
+    <Link rel="manage" href="http://mblog.apphb.com" />
+
+    <Link rel="setup" href="http://emailreceiver.apphb.com/setup/${DOMAIN_NAME}" />
+
+    <!-- URL explaining how customers get support. -->
+    <Link rel="support" href="http://mblog.apphb.com" />
+
+    <!-- URL that is displayed to admins during the deletion process,
+     to specify policies such as data retention, how to claim accounts, etc. -->
+    <Link rel="deletion-policy" href="http://www.google.com" />
+  </Support>
+
+  <!-- Name and description pulled from message bundles -->
+  <Name>EmailReceiver</Name>
+  <Description>Sends Emails to the Email Receiver</Description>
+
+  <!-- Show this link in Google's universal navigation for all users -->
+  <Extension id="navLink" type="link">
+    <Name>EmailReceiver</Name>
+    <Url>http://mblog.apphb.com</Url>
+  </Extension>
+
+ 
+<!-- EXTRACTOR -->
+
+<Extension id="EmailReceiverExtractor" type="contextExtractor">
+  <Name>Email Receiver</Name>
+  <Url>google.com:SubjectExtractor</Url>
+  <!-- Uncomment this Param to apply a filter to the extractor's
+  default output. The example regexp below makes the match case sensitive. -->
+  <Triggers ref="EmailReceiverGadget"/>
+  <Scope ref="emailSubject"/>
+  <Container name="mail"/>
+</Extension>
+
+  <Extension id="EmailReceiverBodyExtractor" type="contextExtractor">
+    <Name>Email Body Receiver</Name>
+    <Url>google.com:EmailBodyExtractor</Url>
+    <!-- Uncomment this Param to apply a filter to the extractor's
+  default output. The example regexp below makes the match case sensitive. -->
+    <Triggers ref="EmailReceiverGadget"/>
+    <Scope ref="emailBody"/>
+    <Container name="mail"/>
+  </Extension>
+
+  <Extension id="EmailReceiverSenderExtractor" type="contextExtractor">
+    <Name>Email Sender Receiver</Name>
+    <Url>google.com:SenderEmailExtractor</Url>
+    <!-- Uncomment this Param to apply a filter to the extractor's
+  default output. The example regexp below makes the match case sensitive. -->
+    <Triggers ref="EmailReceiverGadget"/>
+    <Scope ref="emailSender"/>
+    <Container name="mail"/>
+  </Extension>
+
+
+  <Extension id="EmailReceiverRecipientExtractor" type="contextExtractor">
+    <Name>Email Recipient Receiver</Name>
+    <Url>google.com:RecipientEmailExtractor</Url>
+    <!-- Uncomment this Param to apply a filter to the extractor's
+  default output. The example regexp below makes the match case sensitive. -->
+    <Triggers ref="EmailReceiverGadget"/>
+    <Scope ref="emailTo"/>
+    <Scope ref="emailCC"/>
+    <Container name="mail"/>
+  </Extension>
+
+<!-- GADGET -->
+
+<Extension id="EmailReceiverGadget" type="gadget">
+  <Name>Email Receiver</Name>
+  <Url>http://emailreceiver.apphb.com/Content/Gadget/gadget.xml</Url>
+  <Container name="mail"/>
+  <!-- Uncomment this to enable Caja. -->
+  <!-- <Param name="caja" value="enabled"/> -->
+</Extension>
+
+<!-- SCOPE -->
+
+<Scope id="emailSubject">
+  <Url>tag:google.com,2010:auth/contextual/extractor/SUBJECT</Url>
+  <Reason>This application allows sending the email to the Email Receiver</Reason>
+</Scope>
+  <Scope id="emailBody">
+    <Url>tag:google.com,2010:auth/contextual/extractor/BODY</Url>
+    <Reason>This application allows sending the email to the Email Receiver</Reason>
+  </Scope>
+  <Scope id="emailSender">
+    <Url>tag:google.com,2010:auth/contextual/extractor/FROM_ADDRESS</Url>
+    <Reason>This application allows sending the email to the Email Receiver</Reason>
+  </Scope>
+  <Scope id="emailTo">
+    <Url>tag:google.com,2010:auth/contextual/extractor/TO_ADDRESS</Url>
+    <Reason>This application allows sending the email to the Email Receiver</Reason>
+  </Scope>
+  <Scope id="emailCC">
+    <Url>tag:google.com,2010:auth/contextual/extractor/CC_EMAIL</Url>
+    <Reason>This application allows sending the email to the Email Receiver</Reason>
+  </Scope>
+</ApplicationManifest>

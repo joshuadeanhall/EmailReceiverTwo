@@ -1,10 +1,25 @@
-﻿using Owin;
+﻿using System.Threading;
+using Microsoft.Owin.Security.Cookies;
+using Microsoft.Owin;
+using Owin;
+using System;
 
-public class Startup
+namespace EmailReceiverTwo
 {
-    public void Configuration(IAppBuilder app)
+    public class Startup
     {
-        app.UseNancy();
-
+        public void Configuration(IAppBuilder app)
+        {
+            app.UseCookieAuthentication(new CookieAuthenticationOptions
+            {
+                LoginPath = "/login",
+                LogoutPath = "/logout",
+                CookieHttpOnly = true,
+                AuthenticationType = "EmailR",
+                CookieName = "emailr.id",
+                ExpireTimeSpan = TimeSpan.FromDays(30)
+            });
+            app.UseNancy();
+        }
     }
 }

@@ -10,7 +10,7 @@ namespace EmailReceiverTwo
     {
         public void Configuration(IAppBuilder app)
         {
-            app.UseCookieAuthentication(new CookieAuthenticationOptions
+            var options = new CookieAuthenticationOptions
             {
                 LoginPath = "/login",
                 LogoutPath = "/logout",
@@ -18,7 +18,9 @@ namespace EmailReceiverTwo
                 AuthenticationType = "EmailR",
                 CookieName = "emailr.id",
                 ExpireTimeSpan = TimeSpan.FromDays(30)
-            });
+            };
+            
+            app.UseCookieAuthentication(options);
             app.UseNancy();
         }
     }

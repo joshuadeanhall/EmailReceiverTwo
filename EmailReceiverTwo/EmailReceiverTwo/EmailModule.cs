@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using EmailReceiverTwo.Domain;
 using Nancy;
 using Nancy.ModelBinding;
@@ -8,7 +9,7 @@ using Raven.Client;
 
 namespace EmailReceiverTwo
 {
-    public class EmailModule : NancyModule
+    public class EmailModule : EmailRModule
     {
         public EmailModule(IDocumentSession documentSession)
             : base("email")
@@ -16,22 +17,25 @@ namespace EmailReceiverTwo
             
             Get["/"] = _ =>
             {
-                this.RequiresAuthentication();
-                var user =
-                    documentSession.Query<UserModel>().Single(u => u.Username == this.Context.CurrentUser.UserName);
-                var emails =
-                    documentSession.Query<Email>()
-                        .Where(e => e.Organization == user.Organization && e.Processed == false)
-                        .Select(e => new EmailViewModel()
-                        {
-                            Id = e.Id,
-                            Body = e.Body,
-                            Domain = e.Organization.Name,
-                            From = e.From,
-                            Subject = e.Subject,
-                            To = e.To
-                        });
-                return Response.AsJson(emails);
+                if (IsAuthenticated)
+                {
+                    var user =
+                        documentSession.Query<EmailUser>().Single(u => u.Username == this.Context.CurrentUser.UserName);
+                    var emails =
+                        documentSession.Query<Email>()
+                            .Where(e => e.Organization == user.Organization && e.Processed == false)
+                            .Select(e => new EmailViewModel()
+                            {
+                                Id = e.Id,
+                                Body = e.Body,
+                                Domain = e.Organization.Name,
+                                From = e.From,
+                                Subject = e.Subject,
+                                To = e.To
+                            });
+                    return Response.AsJson(emails);
+                }
+                return HttpStatusCode.Unauthorized;
             };
 
             Post["/process/{Id}"] = parameters =>

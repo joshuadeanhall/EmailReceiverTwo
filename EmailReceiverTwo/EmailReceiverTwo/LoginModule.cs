@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Security.Claims;
 using EmailReceiver.Models;
+using EmailReceiverTwo.Helpers;
+using EmailReceiverTwo.Infrastructure;
 using EmailReceiverTwo.Infrastructure.User;
 using Microsoft.Owin;
 using Nancy;
@@ -36,14 +38,15 @@ namespace EmailReceiverTwo
                 Guid? userGuid = userMapper.ValidateUser(model.Username, model.Password);
                 if (userGuid != null)
                 {
-                    var env = Get<IDictionary<string, object>>(Context.Items, NancyOwinHost.RequestEnvironmentKey);
+                    var env =  NancyExtensions.Get<IDictionary<string, object>>(Context.Items, NancyOwinHost.RequestEnvironmentKey);
                     var owinContext = new OwinContext(env);
 
                     var claims = new List<Claim>();
+                    claims.Add(new Claim(EmailRClaimTypes.Identifier, userGuid.ToString()));
                     var identity = new ClaimsIdentity(claims, "EmailR");
                     owinContext.Authentication.SignIn(identity);
 
-                    return View["/"];
+                    return View["index"];
                     // return this.LoginAndRedirect(userGuid.Value, fallbackRedirectUrl: model.ReturnUrl);
                 }
 
@@ -69,15 +72,7 @@ namespace EmailReceiverTwo
             };
         }
 
-        private static T Get<T>(IDictionary<string, object> env, string key)
-        {
-            object value;
-            if (env.TryGetValue(key, out value))
-            {
-                return (T)value;
-            }
-            return default(T);
-        }
+       
     }
 
     public class LoginClass

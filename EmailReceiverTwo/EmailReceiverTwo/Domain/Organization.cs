@@ -8,6 +8,6 @@ namespace EmailReceiverTwo.Domain
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public UserModel Admin { get; set; }
+        public EmailUser Admin { get; set; }
     }
 }

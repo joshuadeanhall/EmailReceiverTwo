@@ -13,22 +13,17 @@ namespace EmailReceiverTwo.Infrastructure.User
 {
     public class UserMapper
     {
-        private IDocumentSession DocumentSession;
+        private IDocumentSession _documentSession;
 
-        public UserMapper(IDocumentSession DocumentSession)
+        public UserMapper(IDocumentSession documentSession)
         {
-            this.DocumentSession = DocumentSession;
+            _documentSession = documentSession;
 
         } 
-        public IUserIdentity GetUserFromIdentifier(Guid identifier, NancyContext context)
-        {
-            var userRecord = DocumentSession.Load<UserModel>(identifier);
-            return userRecord == null ? null : new UserIdentity() { UserName = userRecord.Username, FriendlyName = userRecord.FriendlyName };
-        }
 
         public Guid? ValidateUser(string username, string password)
         {
-            var userRecord = DocumentSession.Query<UserModel>().Where(x => x.Username == username && x.Password == EncodePassword(password)).FirstOrDefault();
+            var userRecord = _documentSession.Query<EmailUser>().FirstOrDefault(x => x.Name == username && x.Password == EncodePassword(password));
 
             if (userRecord == null)
             {
@@ -55,22 +50,22 @@ namespace EmailReceiverTwo.Infrastructure.User
 
         public Guid? ValidateRegisterNewUser(RegisterViewModel model)
         {
-            var userRecord = new UserModel()
+            var userRecord = new EmailUser()
             {
                 Id = Guid.NewGuid(),
                 LoginType = "Default",
-                EmailAddress = model.Email,
+                Email = model.Email,
                 FriendlyName = model.Name,
-                Username = model.UserName,
+                Name = model.UserName,
                 Password = EncodePassword(model.Password)
             };
 
-            var existingUser = DocumentSession.Query<UserModel>().Where(x => x.EmailAddress == userRecord.EmailAddress && x.LoginType == "Default").FirstOrDefault();
+            var existingUser = _documentSession.Query<EmailUser>().FirstOrDefault(x => x.Email == userRecord.Email && x.LoginType == "Default");
             if (existingUser != null)
                 return null;
 
-            DocumentSession.Store(userRecord);
-            DocumentSession.SaveChanges();
+            _documentSession.Store(userRecord);
+            _documentSession.SaveChanges();
 
             return userRecord.Id;
         }

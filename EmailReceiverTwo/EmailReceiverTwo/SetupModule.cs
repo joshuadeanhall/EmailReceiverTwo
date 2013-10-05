@@ -15,7 +15,7 @@ namespace EmailReceiverTwo
             Get["/{Organization}"] = parameters =>
             {
                 var user =
-                    documentSession.Query<UserModel>().Single(u => u.Username == this.Context.CurrentUser.UserName);
+                    documentSession.Query<EmailUser>().Single(u => u.Username == this.Context.CurrentUser.UserName);
                 var organization = new Organization
                 {
                     Id = Guid.NewGuid(),

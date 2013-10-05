@@ -18,9 +18,9 @@ namespace EmailReceiverTwo
             Get["/"] = _ =>
             {
                 var user =
-                    documentSession.Query<UserModel>().Single(u => u.Username == this.Context.CurrentUser.UserName);
+                    documentSession.Query<EmailUser>().Single(u => u.Username == this.Context.CurrentUser.UserName);
                 var users =
-                    documentSession.Query<UserModel>()
+                    documentSession.Query<EmailUser>()
                         .Where(u => u.Organization.Id == user.Organization.Id)
                         .Select(c => new UserViewModel {Name = c.Username, Organization = c.Organization.Name}).ToList();
                 return Response.AsJson(users);
@@ -28,9 +28,9 @@ namespace EmailReceiverTwo
             Post["/"] = _ =>
             {
                  var user =
-                    documentSession.Query<UserModel>().Single(u => u.Username == this.Context.CurrentUser.UserName);
+                    documentSession.Query<EmailUser>().Single(u => u.Username == this.Context.CurrentUser.UserName);
                 var createUser = this.Bind<CreateUserViewModel>();
-                var newUser = new UserModel
+                var newUser = new EmailUser
                 {
                     EmailAddress = createUser.Email,
                     FriendlyName = createUser.FriendlyName,

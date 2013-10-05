@@ -1,19 +1,19 @@
-﻿using System.Linq;
-using EmailReceiverTwo.Domain;
+﻿using EmailReceiverTwo.Helpers;
 using Nancy;
 using Nancy.Security;
-using Raven.Client;
 
 namespace EmailReceiverTwo
 {
-    public class IndexModule : NancyModule
+    public class IndexModule : EmailRModule
     {
         public IndexModule()
         {
+            //v
             this.RequiresAuthentication();
             Get["/"] = parameters =>
             {
-                var currentUser = this.Context.CurrentUser;
+                var principal = this.GetPrincipal();
+                var isAuth = this.IsAuthenticated;
                 //var user = documentSession.Query<UserModel>().Single(u => u.Username == currentUser.UserName);
                 //if (user.Organization == null)
                 //{

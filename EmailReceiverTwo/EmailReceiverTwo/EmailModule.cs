@@ -22,7 +22,6 @@ namespace EmailReceiverTwo
             {
                 if (IsAuthenticated)
                 {
-                    var userId = Principal.GetUserId();
                     var user =
                         documentSession.Load<EmailUser>(Principal.GetUserId());
                     var emails =
@@ -60,8 +59,8 @@ namespace EmailReceiverTwo
                         To = email.To
 
                     };
-
-                    hub.Clients.All.EmailRemoved(emailViewModel);
+                    hub.Clients.Group(emailViewModel.Domain).EmailRemoved(emailViewModel);
+                    //hub.Clients.All.EmailRemoved(emailViewModel);
                     return HttpStatusCode.OK;
                 }
                 return HttpStatusCode.Unauthorized;
@@ -88,15 +87,5 @@ namespace EmailReceiverTwo
                 return HttpStatusCode.OK;
             };
         }
-    }
-
-    public class EmailViewModel
-    {
-        public Guid Id { get; set; }
-        public string From { get; set; }
-        public string To { get; set; }
-        public string Subject { get; set; }
-        public string Body { get; set; }
-        public string Domain { get; set; }
     }
 }

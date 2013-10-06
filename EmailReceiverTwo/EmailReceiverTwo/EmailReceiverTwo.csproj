@@ -75,6 +75,9 @@
     <Reference Include="Nancy.Owin">
       <HintPath>..\packages\Nancy.Owin.0.20.0\lib\net40\Nancy.Owin.dll</HintPath>
     </Reference>
+    <Reference Include="Nancy.Validation.DataAnnotations">
+      <HintPath>..\packages\Nancy.Validation.DataAnnotations.0.20.0\lib\net40\Nancy.Validation.DataAnnotations.dll</HintPath>
+    </Reference>
     <Reference Include="Nancy.ViewEngines.Razor, Version=0.17.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Nancy.Viewengines.Razor.0.17.1\lib\net40\Nancy.ViewEngines.Razor.dll</HintPath>
@@ -446,13 +449,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bootstrapper.cs" />
-    <Compile Include="CreateUserViewModel.cs" />
+    <Compile Include="HtmlExtensions\HtmlExtensions.cs" />
+    <Compile Include="Models\CreateUserViewModel.cs" />
     <Compile Include="Domain\Email.cs" />
     <Compile Include="Domain\EmailUserIdentity.cs" />
     <Compile Include="Domain\Organization.cs" />
     <Compile Include="Domain\EmailUser.cs" />
     <Compile Include="EmailModule.cs" />
     <Compile Include="EmailRModule.cs" />
+    <Compile Include="Models\EmailViewModel.cs" />
     <Compile Include="Helpers\NancyExtensions.cs" />
     <Compile Include="Hubs\EmailHub.cs" />
     <Compile Include="IndexModule.cs" />
@@ -465,10 +470,13 @@
     <Compile Include="Infrastructure\PrincipalExtensions.cs" />
     <Compile Include="Infrastructure\StringExtensions.cs" />
     <Compile Include="Infrastructure\TaskAsyncHelper.cs" />
+    <Compile Include="Infrastructure\TinyIOCSignalRDependencyResolver.cs" />
     <Compile Include="Infrastructure\User\UserIdentity.cs" />
     <Compile Include="LoginModule.cs" />
     <Compile Include="Middleware\WindowsPrincipalHandler.cs" />
+    <Compile Include="Models\ErrorModel.cs" />
     <Compile Include="Models\LoginViewModel.cs" />
+    <Compile Include="Models\PageModel.cs" />
     <Compile Include="Models\RegisterViewModel.cs" />
     <Compile Include="Models\UserViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

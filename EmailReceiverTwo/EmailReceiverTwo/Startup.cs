@@ -70,7 +70,7 @@ namespace EmailReceiverTwo
 
 
             var config = new HubConfiguration();
-            //config.Resolver = new TinyIOCSignalRDependencyResolver(container);
+            config.Resolver = new TinyIOCSignalRDependencyResolver(container);
             app.MapSignalR(config);
             //app.MapSignalR(config);
 

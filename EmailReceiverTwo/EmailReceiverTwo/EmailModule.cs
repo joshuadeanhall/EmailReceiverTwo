@@ -59,7 +59,8 @@ namespace EmailReceiverTwo
                         To = email.To
 
                     };
-                    hub.Clients.Group(emailViewModel.Domain).EmailRemoved(emailViewModel);
+                    hub.Clients.Group("test").EmailRemoved(emailViewModel);
+                    hub.Clients.All.EmailRemovedTest("test");
                     //hub.Clients.All.EmailRemoved(emailViewModel);
                     return HttpStatusCode.OK;
                 }

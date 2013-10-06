@@ -14,12 +14,12 @@ namespace EmailReceiverTwo.Hubs
     [AuthorizeClaim(EmailRClaimTypes.Identifier)]
     public class EmailHub : Hub
     {
-        private readonly IDocumentSession _documentSession;
+        //private readonly IDocumentSession _documentSession;
 
-        public EmailHub(IDocumentSession documentSession)
-        {
-            _documentSession = documentSession;
-        }
+        //public EmailHub(IDocumentSession documentSession)
+        //{
+        //    _documentSession = documentSession;
+        //}
 
         public override Task OnConnected()
         {
@@ -29,9 +29,9 @@ namespace EmailReceiverTwo.Hubs
             // After the code in this method completes, the client is informed that
             // the connection is established; for example, in a JavaScript client,
             // the start().done callback is executed.
-            var userId = Context.User.GetUserId();
-            var user = _documentSession.Load<EmailUser>(userId);
-            Groups.Add(Context.ConnectionId, user.Organization.Name);
+           // var userId = Context.User.GetUserId();
+           // var user = _documentSession.Load<EmailUser>(userId);
+            Groups.Add(Context.ConnectionId, "test");
             return base.OnConnected();
         }
 
@@ -49,6 +49,7 @@ namespace EmailReceiverTwo.Hubs
             // For example: in a chat application, you might have marked the
             // user as offline after a period of inactivity; in that case 
             // mark the user as online again.
+            Groups.Add(Context.ConnectionId, "test");
             return base.OnReconnected();
         }
 
@@ -67,6 +68,7 @@ namespace EmailReceiverTwo.Hubs
         public void AddEmailTest()
         {
             string x = "test";
+
         }
 
     }

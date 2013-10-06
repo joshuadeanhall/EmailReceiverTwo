@@ -67,7 +67,7 @@
           var params = {};
           params[gadgets.io.RequestParameters.METHOD] = gadgets.io.MethodType.POST;
           params[gadgets.io.RequestParameters.POST_DATA] = gadgets.io.encodeValues(postdata);
-          gadgets.io.makeRequest("http://receivertwo.apphb.com/email", function() { alert('hi'); }, params); 
+          gadgets.io.makeRequest("http://receivertwo.apphb.com/email", function() { alert('The email was sent to the email receiver'); }, params); 
         }
         
         
@@ -79,7 +79,7 @@
 
         document.body.appendChild(button);        
         
-        gadgets.window.adjustHeight(300);
+        gadgets.window.adjustHeight(100);
 		gadgets.window.adjustWidth(100);
       </script>
       <div id="output"></div>

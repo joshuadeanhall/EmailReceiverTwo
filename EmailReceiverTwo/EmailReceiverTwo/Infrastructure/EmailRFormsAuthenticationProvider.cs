@@ -151,15 +151,11 @@ namespace EmailReceiverTwo.Infrastructure
 
             if (principal != null)
             {
-                return _session.Query<EmailUser>().Single(u => u.Id != null && u.Id.ToString() == principal.GetUserId());
+                var userId = principal.GetUserId();
+                return _session.Query<EmailUser>().SingleOrDefault(u => u.Id != null && u.Id == principal.GetUserId());
             }
 
             return null;
-        }
-
-        public void ApplyRedirect(CookieApplyRedirectContext context)
-        {
-            context.Response.Redirect(context.RedirectUri);
         }
     }
 }

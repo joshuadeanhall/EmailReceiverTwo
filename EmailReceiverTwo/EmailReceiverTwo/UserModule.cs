@@ -18,27 +18,26 @@ namespace EmailReceiverTwo
             Get["/"] = _ =>
             {
                 var user =
-                    documentSession.Query<EmailUser>().Single(u => u.Username == this.Context.CurrentUser.UserName);
+                    documentSession.Query<EmailUser>().Single(u => u.Name == this.Context.CurrentUser.UserName);
                 var users =
                     documentSession.Query<EmailUser>()
                         .Where(u => u.Organization.Id == user.Organization.Id)
-                        .Select(c => new UserViewModel {Name = c.Username, Organization = c.Organization.Name}).ToList();
+                        .Select(c => new UserViewModel {Name = c.Name, Organization = c.Organization.Name}).ToList();
                 return Response.AsJson(users);
             };
             Post["/"] = _ =>
             {
                  var user =
-                    documentSession.Query<EmailUser>().Single(u => u.Username == this.Context.CurrentUser.UserName);
+                    documentSession.Query<EmailUser>().Single(u => u.Name == this.Context.CurrentUser.UserName);
                 var createUser = this.Bind<CreateUserViewModel>();
                 var newUser = new EmailUser
                 {
-                    EmailAddress = createUser.Email,
+                    Email = createUser.Email,
                     FriendlyName = createUser.FriendlyName,
-                    Id = Guid.NewGuid(),
+                    //Id = Guid.NewGuid(),
                     LoginType = "Default",
                     Organization = user.Organization,
-                    Password = UserMapper.EncodePassword(createUser.Password),
-                    Username = createUser.UserName
+                    Name = createUser.UserName
                 };
                 documentSession.Store(newUser);
                 documentSession.SaveChanges();

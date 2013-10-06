@@ -62,7 +62,7 @@ namespace EmailReceiverTwo.Infrastructure
             {
                 foreach (var identity in claimsPrincipal.Identities)
                 {
-                    if (identity.AuthenticationType == Constants.eamilRAuthType)
+                    if (identity.AuthenticationType == Constants.emailRAuthType)
                     {
                         Claim idClaim = identity.FindFirst(EmailRClaimTypes.Identifier);
 

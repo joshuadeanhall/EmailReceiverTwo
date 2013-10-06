@@ -52,7 +52,6 @@ namespace EmailReceiverTwo.Services
             {
                 Name = userName,
                 Status = 1,
-                Id = Guid.NewGuid(),
                 LastActivity = DateTime.UtcNow
             };
 
@@ -106,7 +105,6 @@ namespace EmailReceiverTwo.Services
                 Name = userName,
                 Email = email,
                 Status = 1,
-                Id = Guid.NewGuid(),
                 Salt = _crypto.CreateSalt(),
                 LastActivity = DateTime.UtcNow
             };

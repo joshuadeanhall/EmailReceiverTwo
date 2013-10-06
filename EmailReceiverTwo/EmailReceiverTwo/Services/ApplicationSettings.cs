@@ -11,8 +11,8 @@ namespace EmailReceiverTwo.Services
     {
         public ApplicationSettings()
         {
-            AllowUserRegistration = true;
-            AllowRoomCreation = true;
+            EncryptionKey = CryptoHelper.ToHex(GenerateRandomBytes());
+            VerificationKey = CryptoHelper.ToHex(GenerateRandomBytes());
         }
 
         public string EncryptionKey { get; set; }

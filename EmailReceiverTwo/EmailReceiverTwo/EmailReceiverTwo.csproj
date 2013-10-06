@@ -457,7 +457,6 @@
     <Compile Include="Infrastructure\StringExtensions.cs" />
     <Compile Include="Infrastructure\TaskAsyncHelper.cs" />
     <Compile Include="Infrastructure\User\UserIdentity.cs" />
-    <Compile Include="Infrastructure\User\UserMapper.cs" />
     <Compile Include="LoginModule.cs" />
     <Compile Include="Models\RegisterViewModel.cs" />
     <Compile Include="Models\UserViewModel.cs" />

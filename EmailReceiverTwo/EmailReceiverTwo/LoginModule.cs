@@ -1,24 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using EmailReceiver.Models;
+using EmailReceiverTwo.Domain;
 using EmailReceiverTwo.Helpers;
 using EmailReceiverTwo.Infrastructure;
 using EmailReceiverTwo.Infrastructure.User;
+using EmailReceiverTwo.Services;
 using Microsoft.Owin;
 using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Owin;
 using Raven.Client;
+using Raven.Client.Linq;
 
 namespace EmailReceiverTwo
 {
-    public class LoginModule : NancyModule
+    public class LoginModule : EmailRModule
     {
-        public LoginModule(IDocumentSession documentSession)
+        public LoginModule(IDocumentSession documentSession,
+            ApplicationSettings applicationSettings,
+                             IMembershipService membershipService)
         {
             Get["/login"] = _ =>
             {
+                if (IsAuthenticated)
+                {
+                    return View["index"];
+                }
                 var model = new LoginClass
                 {
                     ReturnUrl = Request.Query.returnUrl
@@ -33,23 +43,25 @@ namespace EmailReceiverTwo
 
             Post["/login"] = parameters =>
             {
-                var model = this.Bind<LoginClass>();
-                var userMapper = new UserMapper(documentSession);
-                Guid? userGuid = userMapper.ValidateUser(model.Username, model.Password);
-                if (userGuid != null)
-                {
-                    var env =  NancyExtensions.Get<IDictionary<string, object>>(Context.Items, NancyOwinHost.RequestEnvironmentKey);
-                    var owinContext = new OwinContext(env);
-
-                    var claims = new List<Claim>();
-                    claims.Add(new Claim(EmailRClaimTypes.Identifier, userGuid.ToString()));
-                    var identity = new ClaimsIdentity(claims, "EmailR");
-                    owinContext.Authentication.SignIn(identity);
-
+                if (IsAuthenticated)
                     return View["index"];
-                    // return this.LoginAndRedirect(userGuid.Value, fallbackRedirectUrl: model.ReturnUrl);
-                }
+                var model = this.Bind<LoginClass>();
 
+                var env = NancyExtensions.Get<IDictionary<string, object>>(Context.Items,
+                    NancyOwinHost.RequestEnvironmentKey);
+                var owinContext = new OwinContext(env);
+
+                var claims = new List<Claim>();
+
+                var userRecord =
+                    documentSession.Query<EmailUser>()
+                        .FirstOrDefault(x => x.Name == model.Username);
+                if (userRecord != null)
+                {
+                    claims.Add(new Claim(EmailRClaimTypes.Identifier, userRecord.Id));
+                    return this.SignIn(claims);
+                }
+                
                 return View["login", model];
             };
 
@@ -62,13 +74,8 @@ namespace EmailReceiverTwo
             Post["/register"] = _ =>
             {
                 var registerModel = this.Bind<RegisterViewModel>();
-                var userMapper = new UserMapper(documentSession);
-                var userGUID = userMapper.ValidateRegisterNewUser(registerModel);
-                if (userGUID != null)
-                {
-                    //this.LoginAndRedirect(userGUID.Value, DateTime.Now.AddDays(7), "/");
-                }
-                return View["Register", registerModel];
+                var user = membershipService.AddUser(registerModel.UserName, registerModel.Email, registerModel.Password);
+                return this.SignIn(user);
             };
         }
 

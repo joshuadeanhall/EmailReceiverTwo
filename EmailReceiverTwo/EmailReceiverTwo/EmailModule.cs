@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using EmailReceiverTwo.Domain;
+using EmailReceiverTwo.Infrastructure;
 using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Security;
@@ -20,7 +21,7 @@ namespace EmailReceiverTwo
                 if (IsAuthenticated)
                 {
                     var user =
-                        documentSession.Query<EmailUser>().Single(u => u.Username == this.Context.CurrentUser.UserName);
+                        documentSession.Load<EmailUser>(Principal.GetUserId());
                     var emails =
                         documentSession.Query<Email>()
                             .Where(e => e.Organization == user.Organization && e.Processed == false)

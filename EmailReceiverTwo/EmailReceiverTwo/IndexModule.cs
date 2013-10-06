@@ -1,22 +1,21 @@
-﻿using System.Linq;
-using EmailReceiverTwo.Domain;
-using EmailReceiverTwo.Infrastructure;
-using Nancy;
-using Raven.Client;
+﻿using Nancy;
 
 namespace EmailReceiverTwo
 {
     public class IndexModule : EmailRModule
     {
-        public IndexModule(IDocumentSession documentSession)
+        public IndexModule()
         {
             Get["/"] = parameters =>
             {
                 if (IsAuthenticated)
                 {
-                    var user =
-                        documentSession.Load<EmailUser>(Principal.GetUserId());
-                    return user.Organization == null ? View["noOrganization"] : View["index"];
+                    //var user = documentSession.Query<UserModel>().Single(u => u.Username == currentUser.UserName);
+                    //if (user.Organization == null)
+                    //{
+                    //    return View["noOrganization"];
+                    //}
+                    return View["index"];
                 }
                 return Response.AsRedirect("/login");
             };

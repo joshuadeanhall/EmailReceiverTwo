@@ -1,22 +1,16 @@
-﻿@using System.Collections.Generic
-@using EmailReceiverTwo.HtmlExtensions
-@using EmailReceiverTwo.Models
-@{
+﻿@{
     Layout = "_Layout.cshtml";
 }
-
 <form method="POST" action="/login">
     <div class="form-group">
         <label for="Username">UserName:</label>
         <input type="text" name="Username" class = "form-control" placeholder = "UserName" />
-        @Html.ValidationMessageFor((List<ErrorModel>)Model.Page.Errors, "Username")
     </div>
     <div class="form-group">
         <label for="Password">Password:</label>
-        <input type="password" name="Password" class = "form-control" placeholder = "Password" />
-        @Html.ValidationMessageFor((List<ErrorModel>)Model.Page.Errors, "Password")
+        <input type="text" name="Password" class = "form-control" placeholder = "Password" />
     </div>
-    <input type="hidden" name="ReturnUrl" value="@Model.LoginModel.ReturnUrl"/>
+    <input type="hidden" name="ReturnUrl" value="@Model.ReturnUrl"/>
     <input type="submit" value="log in" class="btn btn-default" />
 </form>
 <a href="/register">Register</a>

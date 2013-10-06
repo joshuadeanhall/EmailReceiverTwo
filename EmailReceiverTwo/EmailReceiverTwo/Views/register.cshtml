@@ -1,34 +1,26 @@
-﻿@using System.Collections.Generic
-@using EmailReceiverTwo.HtmlExtensions
-@using EmailReceiverTwo.Models
-@{
+﻿@{
     Layout = "_Layout.cshtml";
 }
 <form method="POST" action="/register">
     <div class="form-group">
         <label for="UserName">UserName:</label>
         <input type="text" name="UserName" class = "form-control" placeholder = "Username">
-        @Html.ValidationMessageFor((List<ErrorModel>)Model.Page.Errors, "UserName")
     </div>
     <div class="form-group">
         <label for="Name">Name:</label>
         <input type="text" name="Name" class = "form-control" placeholder = "Name"/>
-        @Html.ValidationMessageFor((List<ErrorModel>)Model.Page.Errors, "Name")
     </div>
     <div class="form-group">
         <label for="Email">Email:</label>
         <input type="text" name="Email" class = "form-control" placeholder = "Email"/>
-        @Html.ValidationMessageFor((List<ErrorModel>)Model.Page.Errors, "Email")
     </div>
     <div class="form-group">
         <label for="Password">Password:</label>
-        <input type="password" name="Password" class = "form-control" placeholder = "Password"/>
-        @Html.ValidationMessageFor((List<ErrorModel>)Model.Page.Errors, "Password")
+        <input type="text" name="Password" class = "form-control" placeholder = "Password"/>
     </div>
     <div class="form-group">
         <label for="ConfirmPassword">Password</label>
-        <input type="password" name="ConfirmPassword" class = "form-control" placeholder = "Password"/>
-        @Html.ValidationMessageFor((List<ErrorModel>)Model.Page.Errors, "ConfirmPassword")
+        <input type="text" name="ConfirmPassword" class = "form-control" placeholder = "Password"/>
     </div>
     <input type="submit" class="btn btn-default" value="log in" />
 </form>

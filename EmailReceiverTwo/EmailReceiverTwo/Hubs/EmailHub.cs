@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
-using EmailReceiverTwo.Domain;
 using EmailReceiverTwo.Infrastructure;
 using Microsoft.AspNet.SignalR;
-using Raven.Client;
 
 
 namespace EmailReceiverTwo.Hubs
@@ -14,12 +12,6 @@ namespace EmailReceiverTwo.Hubs
     [AuthorizeClaim(EmailRClaimTypes.Identifier)]
     public class EmailHub : Hub
     {
-        private readonly IDocumentSession _documentSession;
-
-        public EmailHub(IDocumentSession documentSession)
-        {
-            _documentSession = documentSession;
-        }
 
         public override Task OnConnected()
         {
@@ -29,9 +21,7 @@ namespace EmailReceiverTwo.Hubs
             // After the code in this method completes, the client is informed that
             // the connection is established; for example, in a JavaScript client,
             // the start().done callback is executed.
-            var userId = Context.User.GetUserId();
-            var user = _documentSession.Load<EmailUser>(userId);
-            Groups.Add(Context.ConnectionId, user.Organization.Name);
+            var user = Context.User;
             return base.OnConnected();
         }
 

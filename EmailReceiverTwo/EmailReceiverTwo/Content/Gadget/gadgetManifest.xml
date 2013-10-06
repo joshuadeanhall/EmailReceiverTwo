@@ -7,12 +7,12 @@
     
     <!-- URL for application configuration, accessed from the app settings
      page in the control panel -->
-    <Link rel="manage" href="http://mblog.apphb.com" />
+    <Link rel="manage" href="http://receivertwo.apphb.com" />
 
-    <Link rel="setup" href="http://emailreceiver.apphb.com/setup/${DOMAIN_NAME}" />
+    <Link rel="setup" href="http://receivertwo.apphb.com/setup/${DOMAIN_NAME}" />
 
     <!-- URL explaining how customers get support. -->
-    <Link rel="support" href="http://mblog.apphb.com" />
+    <Link rel="support" href="http://receivertwo.apphb.com" />
 
     <!-- URL that is displayed to admins during the deletion process,
      to specify policies such as data retention, how to claim accounts, etc. -->
@@ -26,7 +26,7 @@
   <!-- Show this link in Google's universal navigation for all users -->
   <Extension id="navLink" type="link">
     <Name>EmailReceiver</Name>
-    <Url>http://mblog.apphb.com</Url>
+    <Url>http://receivertwo.apphb.com</Url>
   </Extension>
 
  
@@ -78,7 +78,7 @@
 
 <Extension id="EmailReceiverGadget" type="gadget">
   <Name>Email Receiver</Name>
-  <Url>http://emailreceiver.apphb.com/Content/Gadget/gadget.xml</Url>
+  <Url>http://receivertwo.apphb.com/Content/Gadget/gadget.xml</Url>
   <Container name="mail"/>
   <!-- Uncomment this to enable Caja. -->
   <!-- <Param name="caja" value="enabled"/> -->

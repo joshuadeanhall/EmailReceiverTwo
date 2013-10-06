@@ -8,7 +8,7 @@ namespace EmailReceiverTwo.Infrastructure
     public static class Constants
     {
         public static readonly string AuthResultCookie = "emailr.authResult";
-        public static readonly string emailRAuthType = "EmailR";
+        public static readonly string EmailRAuthType = "EmailR";
     }
 
     public static class EmailRClaimTypes

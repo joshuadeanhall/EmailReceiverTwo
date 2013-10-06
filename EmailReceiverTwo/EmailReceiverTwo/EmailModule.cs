@@ -2,7 +2,9 @@
 using System.Linq;
 using System.Reflection;
 using EmailReceiverTwo.Domain;
+using EmailReceiverTwo.Hubs;
 using EmailReceiverTwo.Infrastructure;
+using Microsoft.AspNet.SignalR;
 using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Security;
@@ -20,11 +22,12 @@ namespace EmailReceiverTwo
             {
                 if (IsAuthenticated)
                 {
+                    var userId = Principal.GetUserId();
                     var user =
                         documentSession.Load<EmailUser>(Principal.GetUserId());
                     var emails =
                         documentSession.Query<Email>()
-                            .Where(e => e.Organization == user.Organization && e.Processed == false)
+                            .Where(e => e.Organization.Id == user.Organization.Id && e.Processed == false)
                             .Select(e => new EmailViewModel()
                             {
                                 Id = e.Id,
@@ -41,23 +44,27 @@ namespace EmailReceiverTwo
 
             Post["/process/{Id}"] = parameters =>
             {
-                this.RequiresAuthentication();
-                var email = documentSession.Load<Email>((Guid)parameters.Id);
-                email.Processed = true;
-                documentSession.SaveChanges();
-                //var hub = GlobalHost.ConnectionManager.GetHubContext<EmailHub>();
-                var emailViewModel = new EmailViewModel
+                if (IsAuthenticated)
                 {
-                    Id = email.Id,
-                    Body = email.Body,
-                    Domain = email.Organization.Name,
-                    From = email.From,
-                    Subject = email.Subject,
-                    To = email.To
-                };
+                    var email = documentSession.Load<Email>((Guid) parameters.Id);
+                    email.Processed = true;
+                    //documentSession.SaveChanges();
+                    var hub = GlobalHost.ConnectionManager.GetHubContext<EmailHub>();
+                    var emailViewModel = new EmailViewModel
+                    {
+                        Id = email.Id,
+                        Body = email.Body,
+                        Domain = email.Organization.Name,
+                        From = email.From,
+                        Subject = email.Subject,
+                        To = email.To
 
-               // hub.Clients.All.EmailRemoved(emailViewModel);
-                return HttpStatusCode.OK;
+                    };
+
+                    hub.Clients.All.EmailRemoved(emailViewModel);
+                    return HttpStatusCode.OK;
+                }
+                return HttpStatusCode.Unauthorized;
             };
 
             Post["/"] = _ =>

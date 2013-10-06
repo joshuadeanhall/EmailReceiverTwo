@@ -1,9 +1,15 @@
 ﻿using System.Configuration;
 using System.Threading;
 using EmailReceiverTwo.Infrastructure;
+using EmailReceiverTwo.Middleware;
 using EmailReceiverTwo.Services;
+using Microsoft.AspNet.SignalR;
+using Microsoft.AspNet.SignalR.Hubs;
+using Microsoft.AspNet.SignalR.Infrastructure;
+using Microsoft.AspNet.SignalR.Transports;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin;
+using Microsoft.Owin.Extensions;
 using Nancy.TinyIoc;
 using Owin;
 using System;
@@ -31,6 +37,16 @@ namespace EmailReceiverTwo
             var documentSession = docStore.OpenSession();
             container.Register<IDocumentSession>(documentSession);
             container.Register<ICookieAuthenticationProvider, EmailRFormsAuthenticationProvider>();
+           
+            SetupAuth(app, container);
+            SetupSignalR(app, container);
+            
+            
+            app.UseNancy();
+        }
+
+        private void SetupAuth(IAppBuilder app, TinyIoCContainer container)
+        {
             var options = new CookieAuthenticationOptions
             {
                 LoginPath = "/login",
@@ -41,8 +57,34 @@ namespace EmailReceiverTwo
                 ExpireTimeSpan = TimeSpan.FromDays(30),
                 Provider = container.Resolve<ICookieAuthenticationProvider>()
             };
+
             app.UseCookieAuthentication(options);
-            app.UseNancy();
+
+            app.Use(typeof (WindowsPrincipalHandler));
+
+            app.UseStageMarker(PipelineStage.Authenticate);
+        }
+
+        private void SetupSignalR(IAppBuilder app, TinyIoCContainer container)
+        {
+
+            //var connectionManager = container.Resolve<IConnectionManager>();
+            //var heartbeat = container.Resolve<ITransportHeartbeat>();
+            //var hubPipeline = container.Resolve<IHubPipeline>();
+
+            //container.Bind<IConnectionManager>()
+            //      .ToConstant(connectionManager);
+
+            //var config = new HubConfiguration
+            //{
+            //    Resolver = container
+            //};
+
+            //hubPipeline.AddModule(kernel.Get<LoggingHubPipelineModule>());
+
+            app.MapSignalR();
+            //app.MapSignalR(config);
+
         }
     }
 }

@@ -31,7 +31,7 @@ namespace EmailReceiverTwo.Helpers
             var env = Get<IDictionary<string, object>>(module.Context.Items, NancyOwinHost.RequestEnvironmentKey);
             var owinContext = new OwinContext(env);
 
-            var identity = new ClaimsIdentity(claims, Constants.emailRAuthType);
+            var identity = new ClaimsIdentity(claims, Constants.EmailRAuthType);
             owinContext.Authentication.SignIn(identity);
 
             return module.AsRedirectQueryStringOrDefault(returnUrl ?? "~/");

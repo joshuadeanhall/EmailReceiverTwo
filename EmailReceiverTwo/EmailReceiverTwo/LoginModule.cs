@@ -74,6 +74,8 @@ namespace EmailReceiverTwo
             Get["/register"] = parameters =>
             {
                 var registerModel = new RegisterViewModel();
+                var returnUrl = Request.Query.returnUrl;
+                registerModel.ReturnUrl = returnUrl;
                 Model.RegisterModel = registerModel;
                 return View["register", Model];
             };
@@ -89,7 +91,7 @@ namespace EmailReceiverTwo
                     return View["register", Model];
                 }
                 var user = membershipService.AddUser(registerModel.UserName, registerModel.Email, registerModel.Password);
-                return this.SignIn(user);
+                return this.SignIn(user, registerModel.ReturnUrl);
             };
         }
 

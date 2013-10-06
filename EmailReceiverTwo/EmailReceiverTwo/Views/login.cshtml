@@ -19,4 +19,4 @@
     <input type="hidden" name="ReturnUrl" value="@Model.LoginModel.ReturnUrl"/>
     <input type="submit" value="log in" class="btn btn-default" />
 </form>
-<a href="/register">Register</a>
+<a href="/register?returnUrl=@Model.LoginModel.ReturnUrl">Register</a>

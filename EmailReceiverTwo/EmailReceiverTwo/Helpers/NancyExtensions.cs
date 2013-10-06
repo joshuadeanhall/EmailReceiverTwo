@@ -37,7 +37,7 @@ namespace EmailReceiverTwo.Helpers
             return module.AsRedirectQueryStringOrDefault(returnUrl ?? "~/");
         }
 
-        public static Response SignIn(this NancyModule module, EmailUser user)
+        public static Response SignIn(this NancyModule module, EmailUser user, string returnUrl = "~/")
         {
             var claims = new List<Claim>();
             claims.Add(new Claim(EmailRClaimTypes.Identifier, user.Id.ToString()));
@@ -48,7 +48,7 @@ namespace EmailReceiverTwo.Helpers
                 claims.Add(new Claim(EmailRClaimTypes.Admin, "true"));
             }
 
-            return module.SignIn(claims);
+            return module.SignIn(claims, returnUrl);
         }
 
         public static bool IsAuthenticated(this NancyModule module)

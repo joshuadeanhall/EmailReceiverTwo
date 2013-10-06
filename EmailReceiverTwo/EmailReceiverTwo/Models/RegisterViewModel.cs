@@ -23,5 +23,7 @@ namespace EmailReceiver.Models
 
         [Required]
         public string ConfirmPassword { get; set; }
+
+        public string ReturnUrl { get; set; }
     }
 }

@@ -68,22 +68,9 @@ namespace EmailReceiverTwo
         private void SetupSignalR(IAppBuilder app, TinyIoCContainer container)
         {
 
-            //var connectionManager = container.Resolve<IConnectionManager>();
-            //var heartbeat = container.Resolve<ITransportHeartbeat>();
-            //var hubPipeline = container.Resolve<IHubPipeline>();
-
-            //container.Bind<IConnectionManager>()
-            //      .ToConstant(connectionManager);
-
-            //var config = new HubConfiguration
-            //{
-            //    Resolver = container
-            //};
-
-            //hubPipeline.AddModule(kernel.Get<LoggingHubPipelineModule>());
 
             var config = new HubConfiguration();
-            config.Resolver = new TinyIOCSignalRDependencyResolver(container);
+            //config.Resolver = new TinyIOCSignalRDependencyResolver(container);
             app.MapSignalR(config);
             //app.MapSignalR(config);
 

@@ -60,9 +60,7 @@ namespace EmailReceiverTwo
                         To = email.To
 
                     };
-                    hub.Clients.Group("test").EmailRemoved(emailViewModel);
-                    hub.Clients.All.EmailRemovedTest("test");
-                    //hub.Clients.All.EmailRemoved(emailViewModel);
+                    hub.Clients.Group(emailViewModel.Domain).EmailRemoved(emailViewModel);
                     return HttpStatusCode.OK;
                 }
                 return HttpStatusCode.Unauthorized;
@@ -84,8 +82,9 @@ namespace EmailReceiverTwo
                 };
                 documentSession.Store(orgEmail);
                 documentSession.SaveChanges();
-               // var hub = GlobalHost.ConnectionManager.GetHubContext<EmailHub>();
-                //hub.Clients.All.AddEmail(email);
+                var hub = connectionManager.GetHubContext<EmailHub>();
+
+                hub.Clients.Group(organization.Name).AddEmail(email);
                 return HttpStatusCode.OK;
             };
         }

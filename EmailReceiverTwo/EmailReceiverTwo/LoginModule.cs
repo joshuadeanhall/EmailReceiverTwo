@@ -67,7 +67,8 @@ namespace EmailReceiverTwo
                 {
                     return this.SignIn(claims, model.ReturnUrl);
                 }
-                return View["login", model];
+                Model.LoginModel = model;
+                return View["login", Model];
             };
 
             Get["/register"] = parameters =>

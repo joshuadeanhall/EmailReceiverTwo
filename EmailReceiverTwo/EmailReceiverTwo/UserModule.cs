@@ -4,6 +4,7 @@ using EmailReceiver.Models;
 using EmailReceiverTwo.Domain;
 using EmailReceiverTwo.Infrastructure;
 using EmailReceiverTwo.Infrastructure.User;
+using EmailReceiverTwo.Services;
 using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Security;
@@ -13,7 +14,9 @@ namespace EmailReceiverTwo
 {
     public class UserModule : EmailRModule
     {
-        public UserModule(IDocumentSession documentSession) : base("user")
+        private readonly ICryptoService _crypto;
+
+        public UserModule(IDocumentSession documentSession, ICryptoService crypto) : base("user")
         {
             Get["/"] = _ =>
             {
@@ -36,11 +39,14 @@ namespace EmailReceiverTwo
                     var user =
                         documentSession.Load<EmailUser>(Principal.GetUserId());
                     var createUser = this.Bind<CreateUserViewModel>();
+                    var salt = crypto.CreateSalt();
                     var newUser = new EmailUser
                     {
                         Email = createUser.Email,
                         FriendlyName = createUser.FriendlyName,
                         //Id = Guid.NewGuid(),
+                        Password = createUser.Password.ToSha256(salt),
+                        Salt = salt,
                         LoginType = "Default",
                         Organization = user.Organization,
                         Name = createUser.UserName,

@@ -14,6 +14,10 @@ emailReceiverApp.controller('EmailController',
         emailHub.client.EmailRemovedTest = function() {
             var x = 'test2';
         };
+        
+        emailHub.client.EmailRemovedServerTest = function () {
+            var x = 'test2';
+        };
 
 
         //var emailHubProxy = signalRHubProxy(

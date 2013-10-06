@@ -5,6 +5,7 @@ using EmailReceiverTwo.Domain;
 using EmailReceiverTwo.Hubs;
 using EmailReceiverTwo.Infrastructure;
 using Microsoft.AspNet.SignalR;
+using Microsoft.AspNet.SignalR.Infrastructure;
 using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Security;
@@ -14,7 +15,7 @@ namespace EmailReceiverTwo
 {
     public class EmailModule : EmailRModule
     {
-        public EmailModule(IDocumentSession documentSession)
+        public EmailModule(IDocumentSession documentSession, IConnectionManager connectionManager)
             : base("email")
         {
             
@@ -48,7 +49,7 @@ namespace EmailReceiverTwo
                     var email = documentSession.Load<Email>((Guid) parameters.Id);
                     email.Processed = true;
                     //documentSession.SaveChanges();
-                    var hub = GlobalHost.ConnectionManager.GetHubContext<EmailHub>();
+                    var hub = connectionManager.GetHubContext<EmailHub>();
                     var emailViewModel = new EmailViewModel
                     {
                         Id = email.Id,

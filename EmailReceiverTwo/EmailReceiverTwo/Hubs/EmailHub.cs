@@ -68,6 +68,7 @@ namespace EmailReceiverTwo.Hubs
         public void AddEmailTest()
         {
             string x = "test";
+            Clients.All.EmailRemovedServerTest("nono");
 
         }
 

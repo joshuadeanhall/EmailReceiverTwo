@@ -10,7 +10,10 @@ using Microsoft.AspNet.SignalR.Transports;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin;
 using Microsoft.Owin.Extensions;
+using Nancy.Bootstrappers.Ninject;
+using Nancy.Owin;
 using Nancy.TinyIoc;
+using Ninject;
 using Owin;
 using System;
 using Raven.Client;
@@ -28,24 +31,59 @@ namespace EmailReceiverTwo
             var connectionString = ConfigurationManager.AppSettings["RavenDB"];
             store.ParseConnectionString(connectionString);
             store.Initialize();
-            container.Register(store, "DocStore");
+            //container.Register(store, "DocStore");
             container.Register<ICryptoService, CryptoService>();
             container.Register<IKeyProvider, SettingsKeyProvider>();
             container.Register<IMembershipService, MembershipService>();
-            container.Register<IUserAuthenticator, UserAuthenticator>();
-            var docStore = container.Resolve<DocumentStore>("DocStore");
-            var documentSession = docStore.OpenSession();
+            //container.Register<IUserAuthenticator, UserAuthenticator>();
+           // var store = container.Resolve<DocumentStore>("DocStore");
+            var documentSession = store.OpenSession();
             container.Register<IDocumentSession>(documentSession);
             container.Register<ICookieAuthenticationProvider, EmailRFormsAuthenticationProvider>();
-           
-            SetupAuth(app, container);
-            SetupSignalR(app, container);
-            
-            
-            app.UseNancy();
+
+
+
+
+
+            //var store = new DocumentStore();
+            //var connectionString = ConfigurationManager.AppSettings["RavenDB"];
+            //store.ParseConnectionString(connectionString);
+            //store.Initialize();
+            //container.Register(store, "DocStore");
+            //var docStore = container.Resolve<DocumentStore>("DocStore");
+            //var documentSession = docStore.OpenSession();
+            //container.Register<IDocumentSession>(documentSession);
+            //container.Register<ICryptoService, CryptoService>();
+            //container.Register<IKeyProvider, SettingsKeyProvider>();
+            //container.Register<IMembershipService, MembershipService>();
+            //container.Register<IUserAuthenticator, UserAuthenticator>();
+            //container.Register<ICookieAuthenticationProvider, EmailRFormsAuthenticationProvider>();
+
+
+
+            var kernel = SetupNinject();
+
+
+
+
+
+            SetupAuth(app, kernel);
+            SetupSignalR(app, kernel);
+            SetupNancy(app, kernel);
         }
 
-        private void SetupAuth(IAppBuilder app, TinyIoCContainer container)
+       
+
+        private void SetupNancy(IAppBuilder app, IKernel kernel)
+        {
+            var bootstrapper = new EmailRNinjectNancyBootstrapper(kernel);
+            var options = new NancyOptions();
+            options.Bootstrapper = bootstrapper;
+            app.UseNancy(options);
+            //app.UseNancy();
+        }
+
+        private void SetupAuth(IAppBuilder app, IKernel kernel)
         {
             var options = new CookieAuthenticationOptions
             {
@@ -55,7 +93,7 @@ namespace EmailReceiverTwo
                 AuthenticationType = "EmailR",
                 CookieName = "emailr.id",
                 ExpireTimeSpan = TimeSpan.FromDays(30),
-                Provider = container.Resolve<ICookieAuthenticationProvider>()
+                Provider = kernel.Get<ICookieAuthenticationProvider>()
             };
 
             app.UseCookieAuthentication(options);
@@ -65,15 +103,47 @@ namespace EmailReceiverTwo
             app.UseStageMarker(PipelineStage.Authenticate);
         }
 
-        private void SetupSignalR(IAppBuilder app, TinyIoCContainer container)
+        private void SetupSignalR(IAppBuilder app, IKernel kernel)
         {
 
 
             var config = new HubConfiguration();
-            config.Resolver = new TinyIOCSignalRDependencyResolver(container);
-            app.MapSignalR(config);
-            //app.MapSignalR(config);
+            var resolver = new NinjectSignalRDependencyResolver(kernel);
+            var connectionManager = resolver.Resolve<IConnectionManager>();
 
+            kernel.Bind<IConnectionManager>()
+                  .ToConstant(connectionManager);
+            config.Resolver = resolver;
+
+            app.MapSignalR(config);
         }
+        
+        private KernelBase SetupNinject()
+        {
+            var store = new DocumentStore();
+            var connectionString = ConfigurationManager.AppSettings["RavenDB"];
+            store.ParseConnectionString(connectionString);
+            store.Initialize();
+            var documentSession = store.OpenSession();
+
+            var kernel = new StandardKernel(new[] {new FactoryModule(),});
+            kernel.Bind<ICryptoService>()
+                .To<CryptoService>();
+            kernel.Bind<IKeyProvider>()
+                .To<SettingsKeyProvider>();
+            kernel.Bind<IMembershipService>()
+                .To<MembershipService>();
+            kernel.Bind<IUserAuthenticator>()
+                .To<UserAuthenticator>();
+            kernel.Bind<ICookieAuthenticationProvider>()
+                .To<EmailRFormsAuthenticationProvider>();
+            kernel.Bind<IDocumentSession>()
+                .ToConstant(documentSession);
+
+            return kernel;
+        }
+
+
+
     }
 }

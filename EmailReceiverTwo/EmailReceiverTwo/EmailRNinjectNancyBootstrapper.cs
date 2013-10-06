@@ -3,12 +3,17 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Security.Claims;
 using System.Security.Principal;
+using EmailReceiverTwo.Infrastructure;
 using EmailReceiverTwo.Infrastructure.User;
 using EmailReceiverTwo.Services;
+using Microsoft.AspNet.SignalR.Infrastructure;
+using Microsoft.Owin.Security.Cookies;
 using Nancy.Bootstrapper;
+using Nancy.Bootstrappers.Ninject;
 using Nancy.Owin;
 using Nancy.Security;
 using Nancy.TinyIoc;
+using Ninject;
 using Raven.Client;
 using Raven.Client.Document;
 
@@ -16,37 +21,23 @@ namespace EmailReceiverTwo
 {
     using Nancy;
 
-    public class Bootstrapper : DefaultNancyBootstrapper
+    public class EmailRNinjectNancyBootstrapper : NinjectNancyBootstrapper
     {
-                 
-        // The bootstrapper enables you to reconfigure the composition of the framework,
-        // by overriding the various methods and properties.
-        // For more information https://github.com/NancyFx/Nancy/wiki/Bootstrapper
-        protected override void ConfigureRequestContainer(TinyIoCContainer container, NancyContext context)
+        private readonly IKernel _kernel;
+
+        public EmailRNinjectNancyBootstrapper(IKernel kernel)
         {
-            base.ConfigureRequestContainer(container, context);
-            container.Register<ICryptoService, CryptoService>();
-            container.Register<IKeyProvider, SettingsKeyProvider>();
-            container.Register<IMembershipService, MembershipService>();
-            container.Register<IUserAuthenticator, UserAuthenticator>();
-            var docStore = container.Resolve<DocumentStore>("DocStore");
-            var documentSession = docStore.OpenSession();
-            container.Register<IDocumentSession>(documentSession);
+            _kernel = kernel;
         }
 
-        protected override void ConfigureApplicationContainer(TinyIoCContainer container)
+        protected override IKernel GetApplicationContainer()
         {
-            base.ConfigureApplicationContainer(container);
-
-            var store = new DocumentStore();
-            var connectionString = ConfigurationManager.AppSettings["RavenDB"];
-            store.ParseConnectionString(connectionString);
-            store.Initialize();
-
-            container.Register(store, "DocStore");
+            return _kernel;
         }
 
-        protected override void ApplicationStartup(TinyIoCContainer container, IPipelines pipelines)
+
+      
+        protected override void ApplicationStartup(IKernel container, IPipelines pipelines)
         {
             base.ApplicationStartup(container, pipelines);
 

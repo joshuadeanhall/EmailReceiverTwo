@@ -82,7 +82,9 @@ namespace EmailReceiverTwo
 
             //hubPipeline.AddModule(kernel.Get<LoggingHubPipelineModule>());
 
-            app.MapSignalR();
+            var config = new HubConfiguration();
+            config.Resolver = new TinyIOCSignalRDependencyResolver(container);
+            app.MapSignalR(config);
             //app.MapSignalR(config);
 
         }

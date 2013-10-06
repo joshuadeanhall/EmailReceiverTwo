@@ -12,6 +12,7 @@ using Microsoft.Owin;
 using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Owin;
+using Nancy.Validation;
 using Raven.Client;
 using Raven.Client.Linq;
 
@@ -34,7 +35,9 @@ namespace EmailReceiverTwo
                 {
                     ReturnUrl = returnUrl
                 };
-                return View["login", model];
+
+                base.Model.LoginModel = model;
+                return View["login", Model];
             };
 
             Get["/logout"] = parameters =>
@@ -44,7 +47,17 @@ namespace EmailReceiverTwo
 
             Post["/login"] = parameters =>
             {
+                
                 var model = this.Bind<LoginViewModel>();
+
+                var result = this.Validate(model);
+
+                if (!result.IsValid)
+                {
+                    this.SaveErrors(result.Errors);
+                    base.Model.LoginModel = model;
+                    return View["login", base.Model];
+                }
 
                 if (IsAuthenticated)
                     return Response.AsRedirect(model.ReturnUrl);
@@ -60,12 +73,20 @@ namespace EmailReceiverTwo
             Get["/register"] = parameters =>
             {
                 var registerModel = new RegisterViewModel();
-                return View["Register", registerModel];
+                Model.RegisterModel = registerModel;
+                return View["register", Model];
             };
 
             Post["/register"] = _ =>
             {
                 var registerModel = this.Bind<RegisterViewModel>();
+                Model.RegisterModel = registerModel;
+                var result = this.Validate(registerModel);
+                if (!result.IsValid)
+                {
+                    SaveErrors(result.Errors);
+                    return View["register", Model];
+                }
                 var user = membershipService.AddUser(registerModel.UserName, registerModel.Email, registerModel.Password);
                 return this.SignIn(user);
             };

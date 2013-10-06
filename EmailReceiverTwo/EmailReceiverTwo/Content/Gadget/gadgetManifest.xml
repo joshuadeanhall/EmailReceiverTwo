@@ -9,7 +9,7 @@
      page in the control panel -->
     <Link rel="manage" href="http://receivertwo.apphb.com" />
 
-    <Link rel="setup" href="http://receivertwo.apphb.com/setup/${DOMAIN_NAME}" />
+    <Link rel="setup" href="http://receivertwo.apphb.com/setup?Organization=${DOMAIN_NAME}" />
 
     <!-- URL explaining how customers get support. -->
     <Link rel="support" href="http://receivertwo.apphb.com" />

@@ -28,7 +28,7 @@ namespace EmailReceiverTwo
             container.Register<ICryptoService, CryptoService>();
             container.Register<IKeyProvider, SettingsKeyProvider>();
             container.Register<IMembershipService, MembershipService>();
-
+            container.Register<IUserAuthenticator, UserAuthenticator>();
             var docStore = container.Resolve<DocumentStore>("DocStore");
             var documentSession = docStore.OpenSession();
             container.Register<IDocumentSession>(documentSession);

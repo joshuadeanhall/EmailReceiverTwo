@@ -458,6 +458,7 @@
     <Compile Include="Infrastructure\TaskAsyncHelper.cs" />
     <Compile Include="Infrastructure\User\UserIdentity.cs" />
     <Compile Include="LoginModule.cs" />
+    <Compile Include="Models\LoginViewModel.cs" />
     <Compile Include="Models\RegisterViewModel.cs" />
     <Compile Include="Models\UserViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -466,8 +467,10 @@
     <Compile Include="Services\ICryptoService.cs" />
     <Compile Include="Services\IKeyProvider.cs" />
     <Compile Include="Services\IMembershipService.cs" />
+    <Compile Include="Services\IUserAuthenticator.cs" />
     <Compile Include="Services\MembershipService.cs" />
     <Compile Include="Services\SettingsKeyProvider.cs" />
+    <Compile Include="Services\UserAuthenticator.cs" />
     <Compile Include="SetupModule.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="UserModule.cs" />

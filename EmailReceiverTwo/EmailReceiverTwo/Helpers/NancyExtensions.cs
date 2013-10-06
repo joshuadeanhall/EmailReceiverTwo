@@ -26,7 +26,7 @@ namespace EmailReceiverTwo.Helpers
             return userIdentity.ClaimsPrincipal;
         }
 
-        public static Response SignIn(this NancyModule module, IEnumerable<Claim> claims)
+        public static Response SignIn(this NancyModule module, IEnumerable<Claim> claims, string returnUrl = "~/")
         {
             var env = Get<IDictionary<string, object>>(module.Context.Items, NancyOwinHost.RequestEnvironmentKey);
             var owinContext = new OwinContext(env);
@@ -34,7 +34,7 @@ namespace EmailReceiverTwo.Helpers
             var identity = new ClaimsIdentity(claims, Constants.emailRAuthType);
             owinContext.Authentication.SignIn(identity);
 
-            return module.AsRedirectQueryStringOrDefault("~/");
+            return module.AsRedirectQueryStringOrDefault(returnUrl ?? "~/");
         }
 
         public static Response SignIn(this NancyModule module, EmailUser user)

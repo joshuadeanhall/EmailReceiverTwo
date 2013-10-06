@@ -1,7 +1,4 @@
-﻿using EmailReceiverTwo.Helpers;
-using Nancy;
-using Nancy.Responses;
-using Nancy.Security;
+﻿using Nancy;
 
 namespace EmailReceiverTwo
 {
@@ -11,8 +8,6 @@ namespace EmailReceiverTwo
         {
             Get["/"] = parameters =>
             {
-                var principal = this.GetPrincipal();
-                var isAuth = this.IsAuthenticated;
                 if (IsAuthenticated)
                 {
                     //var user = documentSession.Query<UserModel>().Single(u => u.Username == currentUser.UserName);

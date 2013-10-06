@@ -120,9 +120,10 @@ namespace EmailReceiverTwo.Services
 
         public bool TryAuthenticateUser(string userName, string password, out EmailUser user)
         {
-            user = _session.Query<EmailUser>().FirstOrDefault(x => x.Name == userName && x.Password == password.ToSha256(x.Salt));
-
-            return user != null;
+            user = _session.Query<EmailUser>().FirstOrDefault(x => x.Name == userName);
+            if (user != null && user.Password == password.ToSha256(user.Salt))
+                return true;
+            return false;
         }
 
         public void ChangeUserName(EmailUser user, string newUserName)

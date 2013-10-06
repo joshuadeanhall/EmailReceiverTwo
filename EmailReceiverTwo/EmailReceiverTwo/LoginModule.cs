@@ -20,18 +20,19 @@ namespace EmailReceiverTwo
     public class LoginModule : EmailRModule
     {
         public LoginModule(IDocumentSession documentSession,
-            ApplicationSettings applicationSettings,
-                             IMembershipService membershipService)
+                             IMembershipService membershipService,
+                               IUserAuthenticator authenticator)
         {
             Get["/login"] = _ =>
             {
+                string returnUrl = Request.Query.returnUrl;
                 if (IsAuthenticated)
                 {
-                    return View["index"];
+                    return Response.AsRedirect(returnUrl);
                 }
-                var model = new LoginClass
+                var model = new LoginViewModel
                 {
-                    ReturnUrl = Request.Query.returnUrl
+                    ReturnUrl = returnUrl
                 };
                 return View["login", model];
             };
@@ -43,25 +44,16 @@ namespace EmailReceiverTwo
 
             Post["/login"] = parameters =>
             {
+                var model = this.Bind<LoginViewModel>();
+
                 if (IsAuthenticated)
-                    return View["index"];
-                var model = this.Bind<LoginClass>();
+                    return Response.AsRedirect(model.ReturnUrl);
 
-                var env = NancyExtensions.Get<IDictionary<string, object>>(Context.Items,
-                    NancyOwinHost.RequestEnvironmentKey);
-                var owinContext = new OwinContext(env);
-
-                var claims = new List<Claim>();
-
-                var userRecord =
-                    documentSession.Query<EmailUser>()
-                        .FirstOrDefault(x => x.Name == model.Username);
-                if (userRecord != null)
+                IList<Claim> claims;
+                if (authenticator.TryAuthenticateUser(model.Username, model.Password, out claims))
                 {
-                    claims.Add(new Claim(EmailRClaimTypes.Identifier, userRecord.Id));
-                    return this.SignIn(claims);
+                    return this.SignIn(claims, model.ReturnUrl);
                 }
-                
                 return View["login", model];
             };
 
@@ -80,12 +72,5 @@ namespace EmailReceiverTwo
         }
 
        
-    }
-
-    public class LoginClass
-    {
-        public string Username { get; set; }
-        public string Password { get; set; }
-        public string ReturnUrl { get; set; }
     }
 }

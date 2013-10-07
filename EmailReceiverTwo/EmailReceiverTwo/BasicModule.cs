@@ -13,7 +13,7 @@ namespace EmailReceiverTwo
             Get["/"] = _ =>
             {
                 string x = "hello world";
-                return Response.AsText(x);
+                return View["basic"];
             };
         }
     }

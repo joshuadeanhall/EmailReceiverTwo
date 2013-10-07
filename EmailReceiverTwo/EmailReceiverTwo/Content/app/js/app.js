@@ -5,7 +5,7 @@ var emailReceiverApp = angular.module('emailReceiverApp', ['ngResource']);
 emailReceiverApp.config(function ($routeProvider) {
 
     $routeProvider.
-        when('/', {
+        when('/emails', {
             controller: 'EmailController',
             templateUrl: 'Content/app/views/emails.html'
         }).

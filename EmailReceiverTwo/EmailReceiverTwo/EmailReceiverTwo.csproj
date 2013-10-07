@@ -118,6 +118,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\app\js\app.js" />
+    <Content Include="Content\app\js\controllers\BasicController.js" />
     <Content Include="Content\app\js\controllers\CreateUserController.js" />
     <Content Include="Content\app\js\controllers\EmailController.js" />
     <Content Include="Content\app\js\controllers\NavbarController.js" />
@@ -509,6 +510,7 @@
     <Content Include="Views\register.cshtml" />
     <Content Include="Views\_Layout.cshtml" />
     <Content Include="Content\Scripts\jquery-2.0.3.min.map" />
+    <Content Include="Views\basic.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

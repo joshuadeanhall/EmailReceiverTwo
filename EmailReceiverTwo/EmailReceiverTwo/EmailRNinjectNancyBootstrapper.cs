@@ -30,6 +30,14 @@ namespace EmailReceiverTwo
             _kernel = kernel;
         }
 
+        protected override void ConfigureRequestContainer(IKernel container, NancyContext context)
+        {
+            base.ConfigureRequestContainer(container, context);
+            container.Bind<IDocumentSession>()
+                     .ToMethod(c => c.Kernel.Get<IDocumentStore>().OpenSession())
+                     .InSingletonScope();
+        }
+
         protected override IKernel GetApplicationContainer()
         {
             return _kernel;

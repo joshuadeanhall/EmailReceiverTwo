@@ -14,10 +14,10 @@ namespace EmailReceiverTwo.Services
         private readonly IMembershipService _service;
         private readonly IDocumentSession _documentSession;
 
-        public UserAuthenticator(IMembershipService service, IDocumentSession documentSession)
+        public UserAuthenticator(IMembershipService service, IDocumentStore store)
         {
             _service = service;
-            _documentSession = documentSession;
+            _documentSession = store.OpenSession();
         }
 
         public bool TryAuthenticateUser(string username, string password, out IList<Claim> claims)

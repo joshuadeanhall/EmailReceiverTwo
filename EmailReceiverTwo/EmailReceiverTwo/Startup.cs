@@ -25,48 +25,7 @@ namespace EmailReceiverTwo
     {
         public void Configuration(IAppBuilder app)
         {
-            var container = TinyIoCContainer.Current;
-
-            var store = new DocumentStore();
-            var connectionString = ConfigurationManager.AppSettings["RavenDB"];
-            store.ParseConnectionString(connectionString);
-            store.Initialize();
-            //container.Register(store, "DocStore");
-            container.Register<ICryptoService, CryptoService>();
-            container.Register<IKeyProvider, SettingsKeyProvider>();
-            container.Register<IMembershipService, MembershipService>();
-            //container.Register<IUserAuthenticator, UserAuthenticator>();
-           // var store = container.Resolve<DocumentStore>("DocStore");
-            var documentSession = store.OpenSession();
-            container.Register<IDocumentSession>(documentSession);
-            container.Register<ICookieAuthenticationProvider, EmailRFormsAuthenticationProvider>();
-
-
-
-
-
-            //var store = new DocumentStore();
-            //var connectionString = ConfigurationManager.AppSettings["RavenDB"];
-            //store.ParseConnectionString(connectionString);
-            //store.Initialize();
-            //container.Register(store, "DocStore");
-            //var docStore = container.Resolve<DocumentStore>("DocStore");
-            //var documentSession = docStore.OpenSession();
-            //container.Register<IDocumentSession>(documentSession);
-            //container.Register<ICryptoService, CryptoService>();
-            //container.Register<IKeyProvider, SettingsKeyProvider>();
-            //container.Register<IMembershipService, MembershipService>();
-            //container.Register<IUserAuthenticator, UserAuthenticator>();
-            //container.Register<ICookieAuthenticationProvider, EmailRFormsAuthenticationProvider>();
-
-
-
             var kernel = SetupNinject();
-
-
-
-
-
             SetupAuth(app, kernel);
             SetupSignalR(app, kernel);
             SetupNancy(app, kernel);
@@ -80,7 +39,6 @@ namespace EmailReceiverTwo
             var options = new NancyOptions();
             options.Bootstrapper = bootstrapper;
             app.UseNancy(options);
-            //app.UseNancy();
         }
 
         private void SetupAuth(IAppBuilder app, IKernel kernel)
@@ -106,7 +64,6 @@ namespace EmailReceiverTwo
         private void SetupSignalR(IAppBuilder app, IKernel kernel)
         {
 
-
             var config = new HubConfiguration();
             var resolver = new NinjectSignalRDependencyResolver(kernel);
             var connectionManager = resolver.Resolve<IConnectionManager>();
@@ -124,9 +81,11 @@ namespace EmailReceiverTwo
             var connectionString = ConfigurationManager.AppSettings["RavenDB"];
             store.ParseConnectionString(connectionString);
             store.Initialize();
-            var documentSession = store.OpenSession();
+           
 
             var kernel = new StandardKernel(new[] {new FactoryModule(),});
+            kernel.Bind<IDocumentStore>()
+                  .ToConstant(store).InSingletonScope();
             kernel.Bind<ICryptoService>()
                 .To<CryptoService>();
             kernel.Bind<IKeyProvider>()
@@ -137,8 +96,6 @@ namespace EmailReceiverTwo
                 .To<UserAuthenticator>();
             kernel.Bind<ICookieAuthenticationProvider>()
                 .To<EmailRFormsAuthenticationProvider>();
-            kernel.Bind<IDocumentSession>()
-                .ToConstant(documentSession);
 
             return kernel;
         }

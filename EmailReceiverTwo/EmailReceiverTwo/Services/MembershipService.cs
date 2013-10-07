@@ -9,16 +9,16 @@ using System.Linq;
 
 namespace EmailReceiverTwo.Services
 {
-    public class MembershipService : IMembershipService
+    public class MembershipService : IMembershipService, IDisposable
     {
         private readonly IDocumentSession _session;
         private readonly ICryptoService _crypto;
 
         private const int passwordMinLength = 6;
 
-        public MembershipService(IDocumentSession session, ICryptoService crypto)
+        public MembershipService(IDocumentStore store, ICryptoService crypto)
         {
-            _session = session;
+            _session = store.OpenSession();
             _crypto = crypto;
         }
 
@@ -259,6 +259,11 @@ namespace EmailReceiverTwo.Services
         internal static void ThrowProviderAndIdentityExist(string providerName, string identity)
         {
             throw new InvalidOperationException(String.Format("Identity {0} already taken with Provider {1}, please login with a different provider/identity combination.", identity, providerName));
+        }
+
+        public void Dispose()
+        {
+            _session.Dispose();
         }
     }
 }

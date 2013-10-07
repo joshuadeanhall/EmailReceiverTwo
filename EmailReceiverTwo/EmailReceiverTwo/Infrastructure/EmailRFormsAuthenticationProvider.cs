@@ -14,14 +14,14 @@ using Raven.Client.Linq;
 
 namespace EmailReceiverTwo.Infrastructure
 {
-    public class EmailRFormsAuthenticationProvider : ICookieAuthenticationProvider
+    public class EmailRFormsAuthenticationProvider : ICookieAuthenticationProvider, IDisposable
     {
         private readonly IDocumentSession _session;
         private readonly IMembershipService _membershipService;
 
-        public EmailRFormsAuthenticationProvider(IDocumentSession session, IMembershipService membershipService)
+        public EmailRFormsAuthenticationProvider(IDocumentStore store, IMembershipService membershipService)
         {
-            _session = session;
+            _session = store.OpenSession();
             _membershipService = membershipService;
         }
 
@@ -156,6 +156,11 @@ namespace EmailReceiverTwo.Infrastructure
             }
 
             return null;
+        }
+
+        public void Dispose()
+        {
+            _session.Dispose();
         }
     }
 }

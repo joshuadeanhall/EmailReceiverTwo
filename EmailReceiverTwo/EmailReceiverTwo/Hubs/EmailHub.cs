@@ -14,11 +14,11 @@ namespace EmailReceiverTwo.Hubs
     [AuthorizeClaim(EmailRClaimTypes.Identifier)]
     public class EmailHub : Hub
     {
-        private readonly IDocumentSession _documentSession;
+        private readonly IDocumentStore _documentStore;
 
-        public EmailHub(IDocumentSession documentSession)
+        public EmailHub(IDocumentStore documentStore)
         {
-            _documentSession = documentSession;
+            _documentStore = documentStore;
         }
 
         public override Task OnConnected()
@@ -29,9 +29,12 @@ namespace EmailReceiverTwo.Hubs
             // After the code in this method completes, the client is informed that
             // the connection is established; for example, in a JavaScript client,
             // the start().done callback is executed.
-            var userId = Context.User.GetUserId();
-            var user = _documentSession.Load<EmailUser>(userId);
-            Groups.Add(Context.ConnectionId, user.Organization.Name);
+            using (var session = _documentStore.OpenSession())
+            {
+                var userId = Context.User.GetUserId();
+                var user = session.Load<EmailUser>(userId);
+                Groups.Add(Context.ConnectionId, user.Organization.Name);
+            }
             return base.OnConnected();
         }
 
@@ -49,9 +52,12 @@ namespace EmailReceiverTwo.Hubs
             // For example: in a chat application, you might have marked the
             // user as offline after a period of inactivity; in that case 
             // mark the user as online again.
-            var userId = Context.User.GetUserId();
-            var user = _documentSession.Load<EmailUser>(userId);
-            Groups.Add(Context.ConnectionId, user.Organization.Name);
+            using (var session = _documentStore.OpenSession())
+            {
+                var userId = Context.User.GetUserId();
+                var user = session.Load<EmailUser>(userId);
+                Groups.Add(Context.ConnectionId, user.Organization.Name);
+            }
             return base.OnReconnected();
         }
     }

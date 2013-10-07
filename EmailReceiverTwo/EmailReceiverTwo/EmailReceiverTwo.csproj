@@ -509,7 +509,6 @@
     <Content Include="Views\register.cshtml" />
     <Content Include="Views\_Layout.cshtml" />
     <Content Include="Content\Scripts\jquery-2.0.3.min.map" />
-    <Content Include="Views\basic.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

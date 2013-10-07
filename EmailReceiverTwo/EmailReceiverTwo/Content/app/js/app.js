@@ -9,7 +9,7 @@ emailReceiverApp.config(function ($routeProvider) {
             controller: 'EmailController',
             templateUrl: 'Content/app/views/emails.html'
         }).
-        when('/users', {
+        when('#/users', {
             controller: 'UserController',
             templateUrl: 'Content/app/views/user.html'
         }).

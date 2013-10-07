@@ -7,7 +7,6 @@
     <meta name="author" content="">
 
     <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script>
     <title>Email Receiver</title>
     <link rel="stylesheet" type="text/css" href="~/Content/bootstrap/bootstrap.css" />
     <link rel="stylesheet" type="text/css" href="~/Content/site.css" />
@@ -18,7 +17,7 @@
         <![endif]-->
 </head>
 <body>
-    <div class="navbar navbar-inverse navbar-fixed-top" ng-controller="NavbarController">
+    <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -30,13 +29,13 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li ng-class="{active: routeIs('/')}">
+                    <li>
                         <a href="#/">Home</a>
                     </li>
-                     <li ng-class="{active: routeIs('/emails')}">
+                     <li>
                         <a href="#/emails">Emails</a>
                     </li>
-                    <li ng-class="{active: routeIs('/users')}" >
+                    <li>
                         <a href="#/users">Users</a>
                     </li>
                 </ul>
@@ -69,7 +68,6 @@
      <script src="~/Content/app/js/controllers/EmailController.js"></script>
     <script src="~/Content/app/js/services/UserService.js"></script>
     <script src="~/Content/app/js/services/EmailService.js"></script>
-    <script src="~/Content/app/js/services/SignalRService.js"></script>
     @RenderSection("scripts", required: false)
 </body>
 </html>

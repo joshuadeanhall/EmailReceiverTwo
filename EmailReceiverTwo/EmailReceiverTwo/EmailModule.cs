@@ -83,7 +83,7 @@ namespace EmailReceiverTwo
                 documentSession.Store(orgEmail);
                 documentSession.SaveChanges();
                 var hub = connectionManager.GetHubContext<EmailHub>();
-
+                email.Id = orgEmail.Id;
                 hub.Clients.Group(organization.Name).AddEmail(email);
                 return HttpStatusCode.OK;
             };

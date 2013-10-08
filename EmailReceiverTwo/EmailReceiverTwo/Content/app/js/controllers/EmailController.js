@@ -1,12 +1,14 @@
 ﻿'use strict';
 
 emailReceiverApp.controller('EmailController',
-    function EmailController($scope, Email) {
+    function EmailController($scope, Email, EmailFinder) {
         $scope.emails = Email.query();
         var emailHub = $.connection.emailHub;
         emailHub.client.EmailRemoved = function (data) {
-            $scope.$apply(function() {
-                $scope.emails.splice($scope.emails.indexOf(data), 1);
+            $scope.$apply(function () {
+                var index = EmailFinder.FindIndex($scope.emails, data);
+                if(index >= 0)
+                    $scope.emails.splice(index, 1);
             });
         };
 

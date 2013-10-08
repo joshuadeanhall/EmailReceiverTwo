@@ -14,7 +14,7 @@ emailReceiverApp.controller('EmailController',
 
         emailHub.client.AddEmail = function (data) {
             $scope.$apply(function() {
-                $scope.emails.push({ Subject: data.Subject, To: data.To, From: data.From });
+                $scope.emails.push(data); //({ Subject: data.Subject, To: data.To, From: data.From });
             });
         };
         $.connection.hub.start();

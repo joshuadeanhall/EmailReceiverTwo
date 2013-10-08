@@ -1,23 +1,23 @@
 ﻿'use strict';
 
 emailReceiverApp.controller('EmailController',
-    function EmailController($scope, Email, EmailFinder) {
+    function EmailController($scope, Email, EmailHubService, EmailFinder) {
         $scope.emails = Email.query();
-        var emailHub = $.connection.emailHub;
-        emailHub.client.EmailRemoved = function (data) {
-            $scope.$apply(function () {
-                var index = EmailFinder.FindIndex($scope.emails, data);
-                if(index >= 0)
-                    $scope.emails.splice(index, 1);
-            });
-        };
+        var emailHub = EmailHubService();
 
-        emailHub.client.AddEmail = function (data) {
-            $scope.$apply(function() {
-                $scope.emails.push(data); //({ Subject: data.Subject, To: data.To, From: data.From });
-            });
-        };
-        $.connection.hub.start();
+        $scope.$on('emailRemoved', function (event, data) {
+            var index = EmailFinder.FindIndex($scope.emails, data);
+            if (index >= 0) {
+                $scope.emails.splice(index, 1);
+                $scope.$apply();
+            }
+        });
+
+        $scope.$on('addEmail', function (event, data) {
+            $scope.emails.push(data);
+            $scope.apply();
+        });
+
 
         $scope.processEmail = function (id) {
 

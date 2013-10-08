@@ -123,6 +123,7 @@
     <Content Include="Content\app\js\controllers\NavbarController.js" />
     <Content Include="Content\app\js\controllers\UserController.js" />
     <Content Include="Content\app\js\services\EmailFinder.js" />
+    <Content Include="Content\app\js\services\EmailHubService.js" />
     <Content Include="Content\app\js\services\EmailService.js" />
     <Content Include="Content\app\js\services\UserService.js" />
     <Content Include="Content\app\views\create-user.html" />

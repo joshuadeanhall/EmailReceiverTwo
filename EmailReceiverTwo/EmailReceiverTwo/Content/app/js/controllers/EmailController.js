@@ -15,7 +15,7 @@ emailReceiverApp.controller('EmailController',
 
         $scope.$on('addEmail', function (event, data) {
             $scope.$apply(function() {
-                $scope.emails.push({ Subject: data.Subject, To: data.To, From: data.From });
+                $scope.emails.push(data);
             });
         });
 

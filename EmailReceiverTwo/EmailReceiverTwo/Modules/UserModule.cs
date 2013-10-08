@@ -1,23 +1,22 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using EmailReceiver.Models;
 using EmailReceiverTwo.Domain;
 using EmailReceiverTwo.Infrastructure;
-using EmailReceiverTwo.Infrastructure.User;
 using EmailReceiverTwo.Services;
 using Nancy;
 using Nancy.ModelBinding;
-using Nancy.Security;
 using Raven.Client;
 
-namespace EmailReceiverTwo
+namespace EmailReceiverTwo.Modules
 {
+    /// <summary>
+    /// Used for CRUD on an organizations users.
+    /// </summary>
     public class UserModule : EmailRModule
     {
-        private readonly ICryptoService _crypto;
-
         public UserModule(IDocumentSession documentSession, ICryptoService crypto) : base("user")
         {
+            //Get a list of all the users in the same organization as you.
             Get["/"] = _ =>
             {
                 if (IsAuthenticated)

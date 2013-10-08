@@ -454,7 +454,6 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BasicModule.cs" />
     <Compile Include="EmailRNinjectNancyBootstrapper.cs" />
     <Compile Include="HtmlExtensions\HtmlExtensions.cs" />
     <Compile Include="Models\CreateUserViewModel.cs" />
@@ -462,12 +461,12 @@
     <Compile Include="Domain\EmailUserIdentity.cs" />
     <Compile Include="Domain\Organization.cs" />
     <Compile Include="Domain\EmailUser.cs" />
-    <Compile Include="EmailModule.cs" />
-    <Compile Include="EmailRModule.cs" />
+    <Compile Include="Modules\EmailModule.cs" />
+    <Compile Include="Modules\EmailRModule.cs" />
     <Compile Include="Models\EmailViewModel.cs" />
     <Compile Include="Helpers\NancyExtensions.cs" />
     <Compile Include="Hubs\EmailHub.cs" />
-    <Compile Include="IndexModule.cs" />
+    <Compile Include="Modules\IndexModule.cs" />
     <Compile Include="Infrastructure\AuthenticationResult.cs" />
     <Compile Include="Infrastructure\AuthorizeClaim.cs" />
     <Compile Include="Infrastructure\Constants.cs" />
@@ -479,7 +478,7 @@
     <Compile Include="Infrastructure\TaskAsyncHelper.cs" />
     <Compile Include="Infrastructure\NinjectSignalRDependencyResolver.cs" />
     <Compile Include="Infrastructure\User\UserIdentity.cs" />
-    <Compile Include="LoginModule.cs" />
+    <Compile Include="Modules\LoginModule.cs" />
     <Compile Include="Middleware\WindowsPrincipalHandler.cs" />
     <Compile Include="Models\ErrorModel.cs" />
     <Compile Include="Models\LoginViewModel.cs" />
@@ -496,9 +495,9 @@
     <Compile Include="Services\MembershipService.cs" />
     <Compile Include="Services\SettingsKeyProvider.cs" />
     <Compile Include="Services\UserAuthenticator.cs" />
-    <Compile Include="SetupModule.cs" />
+    <Compile Include="Modules\SetupModule.cs" />
     <Compile Include="Startup.cs" />
-    <Compile Include="UserModule.cs" />
+    <Compile Include="Modules\UserModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">

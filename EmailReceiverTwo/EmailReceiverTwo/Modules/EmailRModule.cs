@@ -1,16 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Dynamic;
-using System.Linq;
 using System.Security.Claims;
-using System.Web;
 using EmailReceiverTwo.Helpers;
 using EmailReceiverTwo.Models;
 using Nancy;
 using Nancy.Validation;
 
-namespace EmailReceiverTwo
+namespace EmailReceiverTwo.Modules
 {
+    /// <summary>
+    /// Base module for EmailR.  
+    /// </summary>
     public class EmailRModule : NancyModule
     {
         protected PageModel Page { get; set; }

@@ -1,24 +1,24 @@
 ﻿using System;
 using System.Linq;
-using System.Reflection;
 using EmailReceiverTwo.Domain;
 using EmailReceiverTwo.Hubs;
 using EmailReceiverTwo.Infrastructure;
-using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Infrastructure;
 using Nancy;
 using Nancy.ModelBinding;
-using Nancy.Security;
 using Raven.Client;
 
-namespace EmailReceiverTwo
+namespace EmailReceiverTwo.Modules
 {
+    /// <summary>
+    /// Responsible for returning email functions in the application
+    /// </summary>
     public class EmailModule : EmailRModule
     {
         public EmailModule(IDocumentSession documentSession, IConnectionManager connectionManager)
             : base("email")
         {
-            
+            //Returns emails for your organization that are not processed
             Get["/"] = _ =>
             {
                 if (IsAuthenticated)
@@ -42,6 +42,8 @@ namespace EmailReceiverTwo
                 return HttpStatusCode.Unauthorized;
             };
 
+            //Process an email
+            //TODO make sure the user has access to the email.
             Post["/process/{Id}"] = parameters =>
             {
                 if (IsAuthenticated)
@@ -65,7 +67,7 @@ namespace EmailReceiverTwo
                 }
                 return HttpStatusCode.Unauthorized;
             };
-
+            //Create an email.
             Post["/"] = _ =>
             {
                 var email = this.Bind<EmailViewModel>();

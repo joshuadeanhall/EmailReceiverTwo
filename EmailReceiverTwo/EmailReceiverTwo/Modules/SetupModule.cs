@@ -1,18 +1,20 @@
 ﻿using System;
-using System.Linq;
 using EmailReceiverTwo.Domain;
 using EmailReceiverTwo.Helpers;
 using EmailReceiverTwo.Infrastructure;
 using Nancy;
-using Nancy.Security;
 using Raven.Client;
 
-namespace EmailReceiverTwo
+namespace EmailReceiverTwo.Modules
 {
+    /// <summary>
+    /// Used to setup a new organization.
+    /// </summary>
     public class SetupModule : EmailRModule
     {
         public SetupModule(IDocumentSession documentSession) : base("setup")
         {
+            //Looks for the Organization query string and creates a new organization for the currently signed in user.
             Get["/"] = _ =>
             {
                 string org = Request.Query.Organization;

@@ -1,11 +1,13 @@
-﻿using System.Linq;
-using EmailReceiverTwo.Domain;
+﻿using EmailReceiverTwo.Domain;
 using EmailReceiverTwo.Infrastructure;
 using Nancy;
 using Raven.Client;
 
-namespace EmailReceiverTwo
+namespace EmailReceiverTwo.Modules
 {
+    /// <summary>
+    /// Index module just returns the layout rest is handled by angular.
+    /// </summary>
     public class IndexModule : EmailRModule
     {
         public IndexModule(IDocumentSession documentSession)

@@ -1,29 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Security.Claims;
 using EmailReceiver.Models;
-using EmailReceiverTwo.Domain;
 using EmailReceiverTwo.Helpers;
-using EmailReceiverTwo.Infrastructure;
-using EmailReceiverTwo.Infrastructure.User;
 using EmailReceiverTwo.Services;
-using Microsoft.Owin;
 using Nancy;
 using Nancy.ModelBinding;
-using Nancy.Owin;
 using Nancy.Validation;
-using Raven.Client;
-using Raven.Client.Linq;
 
-namespace EmailReceiverTwo
+namespace EmailReceiverTwo.Modules
 {
+    /// <summary>
+    /// Handles the login, logout, and registering.
+    /// </summary>
     public class LoginModule : EmailRModule
     {
-        public LoginModule(IDocumentSession documentSession,
-                             IMembershipService membershipService,
+        public LoginModule(IMembershipService membershipService,
                                IUserAuthenticator authenticator)
         {
+            //Get the login page.  
             Get["/login"] = _ =>
             {
                 string returnUrl = Request.Query.returnUrl;
@@ -36,7 +30,7 @@ namespace EmailReceiverTwo
                     ReturnUrl = returnUrl
                 };
 
-                base.Model.LoginModel = model;
+                Model.LoginModel = model;
                 return View["login", Model];
             };
 
@@ -45,22 +39,23 @@ namespace EmailReceiverTwo
                 return View["login"];
             };
 
+            //Login.
             Post["/login"] = parameters =>
             {
-                
                 var model = this.Bind<LoginViewModel>();
+
+                //If user is already authenticated redirect them to the returnUrl.
+                if (IsAuthenticated)
+                    return Response.AsRedirect(model.ReturnUrl);
 
                 var result = this.Validate(model);
 
                 if (!result.IsValid)
                 {
-                    this.SaveErrors(result.Errors);
-                    base.Model.LoginModel = model;
-                    return View["login", base.Model];
+                    SaveErrors(result.Errors);
+                    Model.LoginModel = model;
+                    return View["login", Model];
                 }
-
-                if (IsAuthenticated)
-                    return Response.AsRedirect(model.ReturnUrl);
 
                 IList<Claim> claims;
                 if (authenticator.TryAuthenticateUser(model.Username, model.Password, out claims))
@@ -79,7 +74,7 @@ namespace EmailReceiverTwo
                 Model.RegisterModel = registerModel;
                 return View["register", Model];
             };
-
+            //Register a new user.
             Post["/register"] = _ =>
             {
                 var registerModel = this.Bind<RegisterViewModel>();

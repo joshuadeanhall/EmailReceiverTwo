@@ -14,7 +14,7 @@ emailReceiverApp.config(function ($routeProvider) {
             templateUrl: 'Content/app/views/user.html'
         }).
         when('/createuser', {
-            controller: 'CreateUserController',
+            controller: 'UserController',
             templateUrl: 'Content/app/views/create-user.html'
         }).
         otherwise({ redirectTo: '/' });

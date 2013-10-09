@@ -33,7 +33,8 @@ namespace EmailReceiverTwo.Modules
             };
             Post["/"] = _ =>
             {
-                if (IsAuthenticated)
+                //If User is authenticated and is the org admin.
+                if (IsAuthenticated && Principal.HasClaim(EmailRClaimTypes.Admin))
                 {
                     var user =
                         documentSession.Load<EmailUser>(Principal.GetUserId());

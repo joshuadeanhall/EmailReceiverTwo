@@ -27,6 +27,8 @@ namespace EmailReceiverTwo.Services
             if (_service.TryAuthenticateUser(username, password, out user))
             {
                 claims.Add(new Claim(EmailRClaimTypes.Identifier, user.Id));
+                if (user == user.Organization.Admin)
+                    claims.Add(new Claim(EmailRClaimTypes.Admin, user.Id));
                 return true;
             }
             return false;

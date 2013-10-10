@@ -28,7 +28,7 @@ namespace EmailReceiverTwo.Modules
                     var emails =
                         documentSession.Query<Email>()
                             .Where(e => e.Organization.Id == user.Organization.Id && e.Processed == false)
-                            .Select(e => new EmailViewModel()
+                            .Select(e => new EmailViewModel
                             {
                                 Id = e.Id,
                                 Body = e.Body,
@@ -43,12 +43,17 @@ namespace EmailReceiverTwo.Modules
             };
 
             //Process an email
-            //TODO make sure the user has access to the email.
             Post["/process/{Id}"] = parameters =>
             {
                 if (IsAuthenticated)
                 {
+                    var user =
+                        documentSession.Load<EmailUser>(Principal.GetUserId());
+                    
                     var email = documentSession.Load<Email>((Guid) parameters.Id);
+                    //Verify the user is in the same orginazation as the email being processed.
+                    if (email.Organization != user.Organization)
+                        return HttpStatusCode.Unauthorized;
                     email.Processed = true;
                     //documentSession.SaveChanges();
                     var hub = connectionManager.GetHubContext<EmailHub>();

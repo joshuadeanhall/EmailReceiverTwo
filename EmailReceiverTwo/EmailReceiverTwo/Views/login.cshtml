@@ -4,16 +4,16 @@
 @{
     Layout = "_Layout.cshtml";
 }
-
+@Html.ValidationSummary((string)@Model.Page.ValidationSummary)
 <form method="POST" action="/login">
     <div class="form-group">
         <label for="Username">UserName:</label>
-        <input type="text" name="Username" class = "form-control" placeholder = "UserName" />
+        <input type="text" name="Username" class = "form-control" placeholder = "UserName" value="@Model.LoginModel.Username" />
         @Html.ValidationMessageFor((List<ErrorModel>)Model.Page.Errors, "Username")
     </div>
     <div class="form-group">
         <label for="Password">Password:</label>
-        <input type="password" name="Password" class = "form-control" placeholder = "Password" />
+        <input type="password" name="Password" class = "form-control" placeholder = "Password" value="@Model.LoginModel.Password" />
         @Html.ValidationMessageFor((List<ErrorModel>)Model.Page.Errors, "Password")
     </div>
     <input type="hidden" name="ReturnUrl" value="@Model.LoginModel.ReturnUrl"/>

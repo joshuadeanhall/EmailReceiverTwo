@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Web;
 using EmailReceiverTwo.Models;
 using Nancy.ViewEngines.Razor;
@@ -28,6 +29,11 @@ namespace EmailReceiverTwo.HtmlExtensions
             }
 
             return new NonEncodedHtmlString(span);
+        }
+
+        public static Nancy.ViewEngines.Razor.IHtmlString ValidationSummary<T>(this HtmlHelpers<T> helper, string message)
+        {
+            return string.IsNullOrEmpty(message) ? new NonEncodedHtmlString("") : new NonEncodedHtmlString(string.Format("<div class=\"alert alert-danger\">{0}</div>", message));
         }
     }
 }

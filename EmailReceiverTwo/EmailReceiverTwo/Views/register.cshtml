@@ -4,30 +4,31 @@
 @{
     Layout = "_Layout.cshtml";
 }
+@Html.ValidationSummary((string)@Model.Page.ValidationSummary)
 <form method="POST" action="/register">
     <div class="form-group">
         <label for="UserName">UserName:</label>
-        <input type="text" name="UserName" class = "form-control" placeholder = "Username">
+        <input type="text" name="UserName" class = "form-control" placeholder = "Username" value="@Model.RegisterModel.UserName">
         @Html.ValidationMessageFor((List<ErrorModel>)Model.Page.Errors, "UserName")
     </div>
     <div class="form-group">
         <label for="Name">Name:</label>
-        <input type="text" name="Name" class = "form-control" placeholder = "Name"/>
+        <input type="text" name="Name" class = "form-control" placeholder = "Name" value="@Model.RegisterModel.Name"/>
         @Html.ValidationMessageFor((List<ErrorModel>)Model.Page.Errors, "Name")
     </div>
     <div class="form-group">
         <label for="Email">Email:</label>
-        <input type="text" name="Email" class = "form-control" placeholder = "Email"/>
+        <input type="text" name="Email" class = "form-control" placeholder = "Email" value="@Model.RegisterModel.Email"/>
         @Html.ValidationMessageFor((List<ErrorModel>)Model.Page.Errors, "Email")
     </div>
     <div class="form-group">
         <label for="Password">Password:</label>
-        <input type="password" name="Password" class = "form-control" placeholder = "Password"/>
+        <input type="password" name="Password" class = "form-control" placeholder = "Password" value="@Model.RegisterModel.Password"/>
         @Html.ValidationMessageFor((List<ErrorModel>)Model.Page.Errors, "Password")
     </div>
     <div class="form-group">
         <label for="ConfirmPassword">Password</label>
-        <input type="password" name="ConfirmPassword" class = "form-control" placeholder = "Password"/>
+        <input type="password" name="ConfirmPassword" class = "form-control" placeholder = "Password" value="@Model.RegisterModel.Password"/>
         @Html.ValidationMessageFor((List<ErrorModel>)Model.Page.Errors, "ConfirmPassword")
     </div>
     <input type="hidden" name="ReturnUrl" value="@Model.RegisterModel.ReturnUrl"/>

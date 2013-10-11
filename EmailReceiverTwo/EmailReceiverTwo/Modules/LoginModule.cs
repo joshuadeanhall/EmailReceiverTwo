@@ -62,6 +62,7 @@ namespace EmailReceiverTwo.Modules
                 {
                     return this.SignIn(claims, model.ReturnUrl);
                 }
+                Page.ValidationSummary = "Your username or password was incorrect";
                 Model.LoginModel = model;
                 return View["login", Model];
             };

@@ -455,6 +455,7 @@
   <ItemGroup>
     <Compile Include="EmailRNinjectNancyBootstrapper.cs" />
     <Compile Include="HtmlExtensions\HtmlExtensions.cs" />
+    <Compile Include="Middleware\RavenSessionHandler.cs" />
     <Compile Include="Models\CreateUserViewModel.cs" />
     <Compile Include="Domain\Email.cs" />
     <Compile Include="Domain\EmailUserIdentity.cs" />

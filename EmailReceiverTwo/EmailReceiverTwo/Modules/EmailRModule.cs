@@ -17,7 +17,6 @@ namespace EmailReceiverTwo.Modules
     {
         protected PageModel Page { get; set; }
         public dynamic Model = new ExpandoObject();
-        [Inject]
         public IDocumentSession DocumentSession { get; set; }
 
         public EmailRModule() : base()
@@ -36,16 +35,13 @@ namespace EmailReceiverTwo.Modules
         {
             Before += ctx =>
             {
+                DocumentSession = Context.Items["documentSession"] as IDocumentSession;
                 Page = new PageModel
                 {
                     Errors = new List<ErrorModel>()
                 };
                 Model.Page = Page;
                 return null;
-            };
-            After += ctx =>
-            {
-                DocumentSession.SaveChanges();
             };
         }
 

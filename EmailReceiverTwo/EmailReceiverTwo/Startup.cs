@@ -21,6 +21,7 @@ namespace EmailReceiverTwo
         public void Configuration(IAppBuilder app)
         {
             var kernel = SetupNinject();
+            app.Use(typeof(RavenSessionHandler), kernel);
             SetupAuth(app, kernel);
             SetupSignalR(app, kernel);
             SetupNancy(app, kernel);
@@ -31,8 +32,7 @@ namespace EmailReceiverTwo
         private void SetupNancy(IAppBuilder app, IKernel kernel)
         {
             var bootstrapper = new EmailRNinjectNancyBootstrapper(kernel);
-            var options = new NancyOptions();
-            options.Bootstrapper = bootstrapper;
+            var options = new NancyOptions {Bootstrapper = bootstrapper};
             app.UseNancy(options);
         }
 
@@ -92,6 +92,7 @@ namespace EmailReceiverTwo
             kernel.Bind<ICookieAuthenticationProvider>()
                 .To<EmailRFormsAuthenticationProvider>();
 
+            
             return kernel;
         }
 

@@ -29,7 +29,6 @@ namespace EmailReceiverTwo.Middleware
             if (windowsPrincipal != null && windowsPrincipal.Identity.IsAuthenticated)
             {
                 await _next(env);
-
                 if (context.Response.StatusCode == 401)
                 {
                     // We're going no add the identifier claim

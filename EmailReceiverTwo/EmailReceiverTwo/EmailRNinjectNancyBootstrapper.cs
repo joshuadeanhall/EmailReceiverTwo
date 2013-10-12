@@ -1,21 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Security.Claims;
 using System.Security.Principal;
-using EmailReceiverTwo.Infrastructure;
 using EmailReceiverTwo.Infrastructure.User;
-using EmailReceiverTwo.Services;
-using Microsoft.AspNet.SignalR.Infrastructure;
-using Microsoft.Owin.Security.Cookies;
 using Nancy.Bootstrapper;
 using Nancy.Bootstrappers.Ninject;
 using Nancy.Owin;
 using Nancy.Security;
-using Nancy.TinyIoc;
 using Ninject;
+using Ninject.Activation;
 using Raven.Client;
-using Raven.Client.Document;
 
 namespace EmailReceiverTwo
 {
@@ -28,14 +22,6 @@ namespace EmailReceiverTwo
         public EmailRNinjectNancyBootstrapper(IKernel kernel)
         {
             _kernel = kernel;
-        }
-
-        protected override void ConfigureRequestContainer(IKernel container, NancyContext context)
-        {
-            base.ConfigureRequestContainer(container, context);
-            container.Bind<IDocumentSession>()
-                     .ToMethod(c => c.Kernel.Get<IDocumentStore>().OpenSession())
-                     .InSingletonScope();
         }
 
         protected override IKernel GetApplicationContainer()
@@ -52,6 +38,24 @@ namespace EmailReceiverTwo
             Csrf.Enable(pipelines);
 
             pipelines.BeforeRequest.AddItemToStartOfPipeline(FlowPrincipal);
+            pipelines.BeforeRequest.AddItemToEndOfPipeline(SetSession);
+            pipelines.AfterRequest.AddItemToStartOfPipeline(DisposeSession);
+        }
+
+        private void DisposeSession(NancyContext context)
+        {
+            var env = Get<IDictionary<string, object>>(context.Items, NancyOwinHost.RequestEnvironmentKey);
+            var session = Get<IDocumentSession>(env, "documentSession");
+            session.SaveChanges();
+            session.Dispose();
+        }
+
+        private Response SetSession(NancyContext context)
+        {
+            var env = Get<IDictionary<string, object>>(context.Items, NancyOwinHost.RequestEnvironmentKey);
+            var session = Get<IDocumentSession>(env, "documentSession") as IDocumentSession;
+            context.Items.Add("documentSession", session);
+            return null;
         }
 
         private Response FlowPrincipal(NancyContext context)

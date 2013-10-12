@@ -1,7 +1,6 @@
 ﻿using EmailReceiverTwo.Domain;
 using EmailReceiverTwo.Infrastructure;
 using Nancy;
-using Raven.Client;
 
 namespace EmailReceiverTwo.Modules
 {
@@ -14,13 +13,13 @@ namespace EmailReceiverTwo.Modules
         {
             Get["/"] = parameters =>
             {
-                if (IsAuthenticated)
+                if (!IsAuthenticated)
                 {
-                    var user =
+                    return HttpStatusCode.Unauthorized;
+                }
+                var user =
                         DocumentSession.Load<EmailUser>(Principal.GetUserId());
                     return user.Organization == null ? View["noOrganization"] : View["index"];
-                }
-                return Response.AsRedirect("/login");
             };
         }
     }

@@ -19,43 +19,43 @@ namespace EmailReceiverTwo.Modules
             //Get a list of all the users in the same organization as you.
             Get["/"] = _ =>
             {
-                if (IsAuthenticated)
+                if (!IsAuthenticated)
                 {
-                    var user =
-                        DocumentSession.Load<EmailUser>(Principal.GetUserId());
-                    var users =
-                        DocumentSession.Query<EmailUser>()
-                            .Where(u => u.Organization.Id == user.Organization.Id)
-                            .Select(c => new UserViewModel {Name = c.Name, Organization = c.Organization.Name}).ToList();
-                    return Response.AsJson(users);
+                    return HttpStatusCode.Unauthorized;
                 }
-                return HttpStatusCode.Unauthorized;
+                var user =
+                    DocumentSession.Load<EmailUser>(Principal.GetUserId());
+                var users =
+                    DocumentSession.Query<EmailUser>()
+                        .Where(u => u.Organization.Id == user.Organization.Id)
+                        .Select(c => new UserViewModel {Name = c.Name, Organization = c.Organization.Name}).ToList();
+                return Response.AsJson(users);
             };
             Post["/"] = _ =>
             {
                 //If User is authenticated and is the org admin.
                 if (IsAuthenticated && Principal.HasClaim(EmailRClaimTypes.Admin))
                 {
-                    var user =
-                        DocumentSession.Load<EmailUser>(Principal.GetUserId());
-                    var createUser = this.Bind<CreateUserViewModel>();
-                    var salt = crypto.CreateSalt();
-                    var newUser = new EmailUser
-                    {
-                        Email = createUser.Email,
-                        FriendlyName = createUser.FriendlyName,
-                        //Id = Guid.NewGuid(),
-                        Password = createUser.Password.ToSha256(salt),
-                        Salt = salt,
-                        LoginType = "Default",
-                        Organization = user.Organization,
-                        Name = createUser.UserName,
-                        IsAdmin = false
-                    };
-                    DocumentSession.Store(newUser);
-                    return HttpStatusCode.OK;
+                    return HttpStatusCode.Unauthorized;
                 }
-                return HttpStatusCode.Unauthorized;
+                var user =
+                    DocumentSession.Load<EmailUser>(Principal.GetUserId());
+                var createUser = this.Bind<CreateUserViewModel>();
+                var salt = crypto.CreateSalt();
+                var newUser = new EmailUser
+                {
+                    Email = createUser.Email,
+                    FriendlyName = createUser.FriendlyName,
+                    //Id = Guid.NewGuid(),
+                    Password = createUser.Password.ToSha256(salt),
+                    Salt = salt,
+                    LoginType = "Default",
+                    Organization = user.Organization,
+                    Name = createUser.UserName,
+                    IsAdmin = false
+                };
+                DocumentSession.Store(newUser);
+                return HttpStatusCode.OK;
             };
         }
     }

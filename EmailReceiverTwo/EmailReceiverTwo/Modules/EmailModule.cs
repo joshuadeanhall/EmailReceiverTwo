@@ -21,9 +21,11 @@ namespace EmailReceiverTwo.Modules
             //Returns emails for your organization that are not processed
             Get["/"] = _ =>
             {
-                if (IsAuthenticated)
+                if (!IsAuthenticated)
                 {
-                    var user =
+                    return HttpStatusCode.Unauthorized;
+                }
+                var user =
                         DocumentSession.Load<EmailUser>(Principal.GetUserId());
                     var emails =
                         DocumentSession.Query<Email>()
@@ -38,16 +40,16 @@ namespace EmailReceiverTwo.Modules
                                 To = e.To
                             });
                     return Response.AsJson(emails);
-                }
-                return HttpStatusCode.Unauthorized;
             };
 
             //Process an email
             Post["/process/{Id}"] = parameters =>
             {
-                if (IsAuthenticated)
+                if (!IsAuthenticated)
                 {
-                    var user =
+                    return HttpStatusCode.Unauthorized;
+                }
+                var user =
                         DocumentSession.Load<EmailUser>(Principal.GetUserId());
 
                     var email = DocumentSession.Load<Email>((Guid)parameters.Id);
@@ -68,8 +70,6 @@ namespace EmailReceiverTwo.Modules
                     };
                     hub.Clients.Group(emailViewModel.Domain).EmailRemoved(emailViewModel);
                     return HttpStatusCode.OK;
-                }
-                return HttpStatusCode.Unauthorized;
             };
             //Create an email.
             Post["/"] = _ =>

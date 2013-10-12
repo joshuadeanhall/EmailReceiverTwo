@@ -12,7 +12,7 @@ namespace EmailReceiverTwo.Modules
     /// </summary>
     public class SetupModule : EmailRModule
     {
-        public SetupModule(IDocumentSession documentSession) : base("setup")
+        public SetupModule() : base("setup")
         {
             //Looks for the Organization query string and creates a new organization for the currently signed in user.
             Get["/"] = _ =>
@@ -21,8 +21,8 @@ namespace EmailReceiverTwo.Modules
 
                 if (IsAuthenticated == false)
                     return Response.AsRedirect(string.Format("/login?returnUrl=/setup?Organization={0}",org));
-                
-                var user = documentSession.Load<EmailUser>(Principal.GetUserId());
+
+                var user = DocumentSession.Load<EmailUser>(Principal.GetUserId());
                 var organization = new Organization
                 {
                     Id = Guid.NewGuid(),
@@ -30,8 +30,7 @@ namespace EmailReceiverTwo.Modules
                     Admin = user
                 };
                 user.Organization = organization;
-                documentSession.Store(organization);
-                documentSession.SaveChanges();
+                DocumentSession.Store(organization);
                 return this.AsRedirectQueryStringOrDefault("/");
             };
         }

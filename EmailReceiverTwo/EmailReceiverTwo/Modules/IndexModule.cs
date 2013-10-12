@@ -10,14 +10,14 @@ namespace EmailReceiverTwo.Modules
     /// </summary>
     public class IndexModule : EmailRModule
     {
-        public IndexModule(IDocumentSession documentSession)
+        public IndexModule()
         {
             Get["/"] = parameters =>
             {
                 if (IsAuthenticated)
                 {
                     var user =
-                        documentSession.Load<EmailUser>(Principal.GetUserId());
+                        DocumentSession.Load<EmailUser>(Principal.GetUserId());
                     return user.Organization == null ? View["noOrganization"] : View["index"];
                 }
                 return Response.AsRedirect("/login");

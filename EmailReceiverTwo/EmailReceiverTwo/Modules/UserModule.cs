@@ -14,7 +14,7 @@ namespace EmailReceiverTwo.Modules
     /// </summary>
     public class UserModule : EmailRModule
     {
-        public UserModule(IDocumentSession documentSession, ICryptoService crypto) : base("user")
+        public UserModule(ICryptoService crypto) : base("user")
         {
             //Get a list of all the users in the same organization as you.
             Get["/"] = _ =>
@@ -22,9 +22,9 @@ namespace EmailReceiverTwo.Modules
                 if (IsAuthenticated)
                 {
                     var user =
-                        documentSession.Load<EmailUser>(Principal.GetUserId());
+                        DocumentSession.Load<EmailUser>(Principal.GetUserId());
                     var users =
-                        documentSession.Query<EmailUser>()
+                        DocumentSession.Query<EmailUser>()
                             .Where(u => u.Organization.Id == user.Organization.Id)
                             .Select(c => new UserViewModel {Name = c.Name, Organization = c.Organization.Name}).ToList();
                     return Response.AsJson(users);
@@ -37,7 +37,7 @@ namespace EmailReceiverTwo.Modules
                 if (IsAuthenticated && Principal.HasClaim(EmailRClaimTypes.Admin))
                 {
                     var user =
-                        documentSession.Load<EmailUser>(Principal.GetUserId());
+                        DocumentSession.Load<EmailUser>(Principal.GetUserId());
                     var createUser = this.Bind<CreateUserViewModel>();
                     var salt = crypto.CreateSalt();
                     var newUser = new EmailUser
@@ -52,8 +52,7 @@ namespace EmailReceiverTwo.Modules
                         Name = createUser.UserName,
                         IsAdmin = false
                     };
-                    documentSession.Store(newUser);
-                    documentSession.SaveChanges();
+                    DocumentSession.Store(newUser);
                     return HttpStatusCode.OK;
                 }
                 return HttpStatusCode.Unauthorized;

@@ -15,7 +15,7 @@ namespace EmailReceiverTwo.Modules
     /// </summary>
     public class EmailModule : EmailRModule
     {
-        public EmailModule(IDocumentSession documentSession, IConnectionManager connectionManager)
+        public EmailModule(IConnectionManager connectionManager)
             : base("email")
         {
             //Returns emails for your organization that are not processed
@@ -24,9 +24,9 @@ namespace EmailReceiverTwo.Modules
                 if (IsAuthenticated)
                 {
                     var user =
-                        documentSession.Load<EmailUser>(Principal.GetUserId());
+                        DocumentSession.Load<EmailUser>(Principal.GetUserId());
                     var emails =
-                        documentSession.Query<Email>()
+                        DocumentSession.Query<Email>()
                             .Where(e => e.Organization.Id == user.Organization.Id && e.Processed == false)
                             .Select(e => new EmailViewModel
                             {
@@ -48,14 +48,13 @@ namespace EmailReceiverTwo.Modules
                 if (IsAuthenticated)
                 {
                     var user =
-                        documentSession.Load<EmailUser>(Principal.GetUserId());
-                    
-                    var email = documentSession.Load<Email>((Guid) parameters.Id);
+                        DocumentSession.Load<EmailUser>(Principal.GetUserId());
+
+                    var email = DocumentSession.Load<Email>((Guid)parameters.Id);
                     //Verify the user is in the same orginazation as the email being processed.
                     if (email.Organization != user.Organization)
                         return HttpStatusCode.Unauthorized;
                     email.Processed = true;
-                    //documentSession.SaveChanges();
                     var hub = connectionManager.GetHubContext<EmailHub>();
                     var emailViewModel = new EmailViewModel
                     {
@@ -76,7 +75,7 @@ namespace EmailReceiverTwo.Modules
             Post["/"] = _ =>
             {
                 var email = this.Bind<EmailViewModel>();
-                var organization = documentSession.Query<Organization>().Single(o => o.Name == email.Domain);
+                var organization = DocumentSession.Query<Organization>().Single(o => o.Name == email.Domain);
                 var orgEmail = new Email
                 {
                     Body = email.Body,
@@ -87,8 +86,7 @@ namespace EmailReceiverTwo.Modules
                     Subject = email.Subject,
                     To = email.To
                 };
-                documentSession.Store(orgEmail);
-                documentSession.SaveChanges();
+                DocumentSession.Store(orgEmail);
                 var hub = connectionManager.GetHubContext<EmailHub>();
                 email.Id = orgEmail.Id;
                 hub.Clients.Group(organization.Name).AddEmail(email);

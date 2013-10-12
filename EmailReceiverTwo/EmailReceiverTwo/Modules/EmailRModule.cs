@@ -5,6 +5,8 @@ using EmailReceiverTwo.Helpers;
 using EmailReceiverTwo.Models;
 using Nancy;
 using Nancy.Validation;
+using Ninject;
+using Raven.Client;
 
 namespace EmailReceiverTwo.Modules
 {
@@ -15,6 +17,8 @@ namespace EmailReceiverTwo.Modules
     {
         protected PageModel Page { get; set; }
         public dynamic Model = new ExpandoObject();
+        [Inject]
+        public IDocumentSession DocumentSession { get; set; }
 
         public EmailRModule() : base()
         {
@@ -38,6 +42,10 @@ namespace EmailReceiverTwo.Modules
                 };
                 Model.Page = Page;
                 return null;
+            };
+            After += ctx =>
+            {
+                DocumentSession.SaveChanges();
             };
         }
 

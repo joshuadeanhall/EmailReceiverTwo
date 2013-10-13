@@ -18,11 +18,16 @@ namespace EmailReceiverTwo.Modules
             Get["/"] = _ =>
             {
                 string org = Request.Query.Organization;
-
                 if (IsAuthenticated == false)
                     return Response.AsRedirect(string.Format("/login?returnUrl=/setup?Organization={0}",org));
 
                 var user = DocumentSession.Load<EmailUser>(Principal.GetUserId());
+                if (user.Organization != null)
+                {
+                    Page.ValidationSummary =
+                        "You already belong to an organization.  If this is an error please contact your administrator";
+                    return View["error", Model];
+                }
                 var organization = new Organization
                 {
                     Id = Guid.NewGuid(),

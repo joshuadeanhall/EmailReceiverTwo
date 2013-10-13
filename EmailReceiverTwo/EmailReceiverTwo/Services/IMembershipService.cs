@@ -13,7 +13,7 @@ namespace EmailReceiverTwo.Services
         // Account creation
         EmailUser AddUser(ClaimsPrincipal claimsPrincipal);
         void LinkIdentity(EmailUser user, ClaimsPrincipal principal);
-        EmailUser AddUser(string userName, string email, string password);
+        EmailUser AddUser(EmailUser user);
 
         void ChangeUserName(EmailUser user, string newUserName);
 

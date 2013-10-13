@@ -86,31 +86,26 @@ namespace EmailReceiverTwo.Services
             });
         }
 
-        public EmailUser AddUser(string userName, string email, string password)
+        public EmailUser AddUser(EmailUser user)
         {
-            if (!IsValidUserName(userName))
+            if (!IsValidUserName(user.Name))
             {
-                throw new InvalidOperationException(String.Format("{0} is not a valid user name.", userName));
+                throw new InvalidOperationException(String.Format("{0} is not a valid user name.", user.Name));
             }
 
-            if (String.IsNullOrEmpty(password))
+            if (String.IsNullOrEmpty(user.Password))
             {
                 ThrowPasswordIsRequired();
             }
 
-            EnsureUserNameIsAvailable(userName);
+            EnsureUserNameIsAvailable(user.Name);
 
-            var user = new EmailUser
-            {
-                Name = userName,
-                Email = email,
-                Status = 1,
-                Salt = _crypto.CreateSalt(),
-                LastActivity = DateTime.UtcNow
-            };
+            user.Status = 1;
+            user.Salt = _crypto.CreateSalt();
+            user.LastActivity = DateTime.UtcNow;
 
-            ValidatePassword(password);
-            user.Password = password.ToSha256(user.Salt);
+            ValidatePassword(user.Password);
+            user.Password = user.Password.ToSha256(user.Salt);
 
             _session.Store(user);
             _session.SaveChanges();

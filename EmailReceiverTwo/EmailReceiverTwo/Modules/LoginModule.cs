@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Security.Claims;
 using EmailReceiver.Models;
+using EmailReceiverTwo.Domain;
 using EmailReceiverTwo.Helpers;
 using EmailReceiverTwo.Services;
 using Nancy;
@@ -86,7 +88,17 @@ namespace EmailReceiverTwo.Modules
                     SaveErrors(result.Errors);
                     return View["register", Model];
                 }
-                var user = membershipService.AddUser(registerModel.UserName, registerModel.Email, registerModel.Password);
+                var user = new EmailUser
+                {
+                    Email = registerModel.Email,
+                    FriendlyName = registerModel.Name,
+                    Id = registerModel.UserName,
+                    IsAdmin = false,
+                    LoginType = "Default",
+                    Name = registerModel.UserName,
+                    Password = registerModel.Password
+                };
+                user = membershipService.AddUser(user);
                 return this.SignIn(user, registerModel.ReturnUrl);
             };
         }
